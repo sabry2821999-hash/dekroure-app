@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>شركة الدكروري للمواد الغذائية | نظام الحسابات</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1F6F54">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الدكروري">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --bg:#FAF7EF;
+  --surface:#FFFFFF;
+  --primary:#1F6F54;
+  --primary-dark:#123D2F;
+  --primary-light:#2F9E73;
+  --accent:#D9A441;
+  --accent-dark:#B9822B;
+  --text:#20302B;
+  --muted:#6E7E77;
+  --border:#E7E1D2;
+  --danger:#C0392B;
+  --danger-bg:#FBE9E7;
+  --warning:#B4700C;
+  --warning-bg:#FCEFD9;
+  --success:#1F6F54;
+  --success-bg:#E4F2EC;
+  --radius:12px;
+  --shadow:0 2px 10px rgba(31,111,84,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Tahoma','Arial',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font-family:inherit;font-size:inherit}
+.hidden{display:none !important}
+
+/* ---------- Login ---------- */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 30% 20%, #1F6F54 0%, #123D2F 60%, #0D2A20 100%);
+  padding:20px;
+}
+.login-card{
+  background:var(--surface);border-radius:20px;padding:36px 30px;width:100%;max-width:380px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:center;
+}
+.brand-mark{width:64px;height:64px;margin:0 auto 12px}
+.login-card h1{font-size:20px;font-weight:900;color:var(--primary-dark);margin-bottom:2px}
+.login-card p.sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.field{text-align:right;margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+.field input,.field select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;
+  background:#FCFBF8;transition:border-color .15s;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:none;border-radius:10px;padding:12px 18px;font-weight:800;font-size:14px;
+  cursor:pointer;transition:transform .1s, filter .15s;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-accent{background:var(--accent);color:#3A2A05}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn-danger{background:var(--danger-bg);color:var(--danger)}
+.btn-block{width:100%}
+.login-error{color:var(--danger);font-size:13px;font-weight:700;margin-bottom:10px;min-height:16px}
+
+/* ---------- App shell ---------- */
+#app{display:none;min-height:100vh}
+.topbar{
+  position:fixed;top:0;right:0;left:0;height:58px;background:var(--surface);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  padding:0 16px;gap:12px;z-index:30;box-shadow:var(--shadow);
+}
+.hamburger{
+  width:38px;height:38px;border-radius:9px;border:1.5px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex:none;
+}
+.topbar .co-name{font-weight:900;font-size:15px;color:var(--primary-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .co-name span{display:block;font-size:11px;font-weight:500;color:var(--muted)}
+.topbar-right{margin-right:auto;display:flex;align-items:center;gap:8px}
+.logout-btn{font-size:12px;color:var(--danger);background:var(--danger-bg);border:none;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:700}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,20,15,.45);z-index:35;display:none}
+.drawer-overlay.open{display:block}
+
+.sidebar{
+  position:fixed;top:0;bottom:0;right:0;width:250px;
+  background:linear-gradient(180deg,var(--primary-dark),#0D2A20);
+  color:#EAF3EE;transform:translateX(100%);transition:transform .25s ease;
+  z-index:40;display:flex;flex-direction:column;padding:18px 14px;overflow-y:auto;
+}
+.sidebar.open{transform:translateX(0)}
+.sidebar .brand{display:flex;align-items:center;gap:10px;padding:6px 6px 18px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:14px}
+.sidebar .brand .brand-mark{width:38px;height:38px;margin:0}
+.sidebar .brand-text{font-weight:900;font-size:15px;line-height:1.3}
+.sidebar .brand-text span{display:block;font-size:10.5px;font-weight:500;opacity:.7}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;
+  color:#D9E7DF;cursor:pointer;font-weight:700;font-size:14px;margin-bottom:3px;
+  transition:background .15s;
+}
+.nav-item .ic{font-size:17px;width:22px;text-align:center}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:var(--accent);color:#3A2A05}
+.nav-badge{margin-right:auto;background:var(--danger);color:#fff;font-size:10.5px;font-weight:800;border-radius:20px;padding:1px 7px}
+.sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);font-size:11px;opacity:.6;text-align:center}
+
+main{padding:74px 14px 30px;transition:margin .2s}
+.container{max-width:1100px;margin:0 auto}
+
+@media(min-width:900px){
+  .hamburger{display:none}
+  .sidebar{transform:translateX(0)}
+  .drawer-overlay{display:none !important}
+  main{margin-right:250px;padding:74px 26px 30px}
+  .topbar{right:0}
+}
+
+/* ---------- Components ---------- */
+.page-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.page-head h2{font-size:19px;font-weight:900;color:var(--primary-dark)}
+.page-head .desc{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.stat-card .k{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}
+.stat-card .v{font-size:22px;font-weight:900;color:var(--primary-dark)}
+.stat-card.warn .v{color:var(--warning)}
+.stat-card.danger .v{color:var(--danger)}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:18px}
+.panel h3{font-size:14.5px;font-weight:800;margin-bottom:12px;color:var(--primary-dark)}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar input[type=text],.toolbar input[type=search]{
+  flex:1;min-width:150px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:#FCFBF8;
+}
+.chip-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:700;color:var(--text)}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#F2EEE1;color:var(--primary-dark);font-weight:800;text-align:right;padding:10px 8px;white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.table-wrap{overflow-x:auto}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.badge-danger{background:var(--danger-bg);color:var(--danger)}
+.badge-warning{background:var(--warning-bg);color:var(--warning)}
+.badge-success{background:var(--success-bg);color:var(--success)}
+.badge-muted{background:#EEE;color:var(--muted)}
+.row-actions{display:flex;gap:6px}
+.icon-btn{border:none;background:#F2EEE1;border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:13px}
+.icon-btn.del{background:var(--danger-bg);color:var(--danger)}
+.empty-state{text-align:center;padding:40px 10px;color:var(--muted)}
+.empty-state .em-ic{font-size:34px;margin-bottom:8px}
+
+.fab{
+  position:fixed;left:18px;bottom:18px;z-index:20;width:54px;height:54px;border-radius:50%;
+  background:var(--accent);color:#3A2A05;border:none;font-size:26px;box-shadow:0 8px 20px rgba(0,0,0,.25);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,15,.5);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:640px){.modal-overlay{align-items:center}}
+.modal{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding:20px}
+@media(min-width:640px){.modal{border-radius:16px}}
+.modal h3{font-size:16px;font-weight:900;color:var(--primary-dark);margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid .full{grid-column:1 / -1}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-actions .btn{flex:1}
+.checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+
+.alert-item{display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid var(--border)}
+.alert-item.danger{background:var(--danger-bg);border-color:transparent}
+.alert-item.warning{background:var(--warning-bg);border-color:transparent}
+.alert-item .ic{font-size:20px}
+.alert-item .txt b{display:block;font-size:13.5px}
+.alert-item .txt span{font-size:12px;color:var(--muted)}
+
+.hist-link{color:var(--primary);font-weight:800;cursor:pointer;text-decoration:underline;font-size:12.5px}
+
+@media print{
+  .topbar,.sidebar,.fab,.toolbar,.chip-tabs,.drawer-overlay,.row-actions{display:none !important}
+  main{margin:0;padding:0}
+  body{background:#fff}
+  .panel{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand-mark">
+      <svg viewBox="0 0 64 64" width="64" height="64">
+        <circle cx="32" cy="32" r="31" fill="#123D2F"/>
+        <path d="M32 46 C32 46 20 38 20 26 C20 20 24 16 28 16 C30 16 31.5 17 32 18 C32.5 17 34 16 36 16 C40 16 44 20 44 26 C44 38 32 46 32 46 Z" fill="#D9A441"/>
+        <path d="M32 46 V22" stroke="#123D2F" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>شركة الدكروري للمواد الغذائية</h1>
+    <p class="sub">نظام إدارة الحسابات والمخزون</p>
+    <div class="login-error" id="loginError"></div>
+    <div class="field">
+      <label>اسم الحساب</label>
+      <input type="text" id="loginUser" placeholder="اسم الحساب" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="كلمة المرور" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">دخول</button>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <div class="topbar">
+    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreData(event)">
+    <button class="hamburger" onclick="toggleDrawer(true)">☰</button>
+    <div class="co-name">شركة الدكروري<span>نظام الحسابات والمخزون</span></div>
+    <div class="topbar-right">
+      <button class="logout-btn" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 64 64" width="38" height="38">
+          <circle cx="32" cy="32" r="31" fill="#0D2A20"/>
+          <path d="M32 46 C32 46 20 38 20 26 C20 20 24 16 28 16 C30 16 31.5 17 32 18 C32.5 17 34 16 36 16 C40 16 44 20 44 26 C44 38 32 46 32 46 Z" fill="#D9A441"/>
+          <path d="M32 46 V22" stroke="#0D2A20" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">الدكروري<span>للمواد الغذائية</span></div>
+    </div>
+    <div id="navList"></div>
+    <div class="sidebar-footer">جميع البيانات محفوظة تلقائياً</div>
+  </nav>
+
+  <main>
+    <div class="container" id="content"></div>
+  </main>
+
+  <button class="fab hidden" id="fabBtn">+</button>
+</div>
+
+<script>
+/* ================= STATE & PERSISTENCE ================= */
+const state = { items:[], customers:[], suppliers:[], purchases:[], sales:[] };
+const KEYS = ['items','customers','suppliers','purchases','sales'];
+let currentView = 'dashboard';
+let currentReportType = 'daily';
+let currentReportDate = todayStr();
+
+async function loadAll(){
+  for(const k of KEYS){
+    try{
+      const v = localStorage.getItem('dekroure_accounting_' + k);
+      state[k] = v ? JSON.parse(v) : [];
+    }catch(e){ state[k] = []; }
+  }
+}
+async function saveKey(k){
+  try{
+    localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(state[k]));
+  }catch(e){ console.error('localStorage save failed', k, e); }
+}
+
+/* ================= UTILS ================= */
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function fmtMoney(n){
+  n = Number(n)||0;
+  return n.toLocaleString('ar-EG',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' ج.م';
+}
+function fmtDate(d){
+  if(!d) return '—';
+  const dt = new Date(d+'T00:00:00');
+  return dt.toLocaleDateString('ar-EG',{year:'numeric',month:'2-digit',day:'2-digit'});
+}
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date(todayStr()+'T00:00:00');
+  const target = new Date(dateStr+'T00:00:00');
+  return Math.round((target-today)/86400000);
+}
+function esc(s){ return (s===undefined||s===null) ? '' : String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function itemById(id){ return state.items.find(i=>i.id===id); }
+function customerById(id){ return state.customers.find(c=>c.id===id); }
+function supplierById(id){ return state.suppliers.find(s=>s.id===id); }
+
+function lowStockItems(){ return state.items.filter(i=> Number(i.quantity) <= Number(i.minQuantity||0)); }
+function expiredItems(){ return state.items.filter(i=> i.expiryDate && daysUntil(i.expiryDate) < 0); }
+function nearExpiryItems(){ return state.items.filter(i=> i.expiryDate && daysUntil(i.expiryDate) >= 0 && daysUntil(i.expiryDate) <= 30); }
+function customerBalance(id){ return state.sales.filter(s=>s.customerId===id && !s.paid).reduce((a,s)=>a+Number(s.total),0); }
+function supplierBalance(id){ return state.purchases.filter(p=>p.supplierId===id && !p.paid).reduce((a,p)=>a+Number(p.total),0); }
+
+/* ================= LOGIN ================= */
+function doLogin(){
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('loginError');
+  if(user === 'شركة الدكروري' && pass === '2030'){
+    err.textContent = '';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    render('dashboard');
+  }else{
+    err.textContent = 'اسم الحساب أو كلمة المرور غير صحيحة';
+  }
+}
+function doLogout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('loginPass').value='';
+}
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+/* ================= NAV / DRAWER ================= */
+const NAV_ITEMS = [
+  {id:'dashboard', ic:'🏠', label:'الرئيسية'},
+  {id:'items', ic:'📦', label:'الأصناف والمخزون'},
+  {id:'purchases', ic:'⬇️', label:'الوارد (المشتريات)'},
+  {id:'sales', ic:'⬆️', label:'المنصرف (المبيعات)'},
+  {id:'customers', ic:'👥', label:'العملاء'},
+  {id:'suppliers', ic:'🚚', label:'الموردين'},
+  {id:'reports', ic:'📊', label:'الجرد والتقارير'},
+  {id:'alerts', ic:'⚠️', label:'التنبيهات'},
+  {id:'settings', ic:'⚙️', label:'الإعدادات والنسخ الاحتياطي'},
+];
+function renderNav(){
+  const alertCount = lowStockItems().length + expiredItems().length + nearExpiryItems().length;
+  document.getElementById('navList').innerHTML = NAV_ITEMS.map(n=>{
+    const badge = (n.id==='alerts' && alertCount>0) ? `<span class="nav-badge">${alertCount}</span>` : '';
+    return `<div class="nav-item ${currentView===n.id?'active':''}" onclick="render('${n.id}')">
+      <span class="ic">${n.ic}</span><span>${n.label}</span>${badge}
+    </div>`;
+  }).join('');
+}
+function toggleDrawer(open){
+  document.getElementById('sidebar').classList.toggle('open', open);
+  document.getElementById('drawerOverlay').classList.toggle('open', open);
+}
+
+/* ================= MODAL ================= */
+function openModal(html){
+  closeModal();
+  const wrap = document.createElement('div');
+  wrap.className='modal-overlay';
+  wrap.id='modalOverlay';
+  wrap.innerHTML = `<div class="modal">${html}</div>`;
+  wrap.addEventListener('click', e=>{ if(e.target===wrap) closeModal(); });
+  document.body.appendChild(wrap);
+}
+function closeModal(){
+  const m = document.getElementById('modalOverlay');
+  if(m) m.remove();
+}
+
+/* ================= MAIN RENDER ROUTER ================= */
+function render(view){
+  currentView = view;
+  toggleDrawer(false);
+  renderNav();
+  const c = document.getElementById('content');
+  const fab = document.getElementById('fabBtn');
+  fab.classList.add('hidden');
+  fab.onclick = null;
+  if(view==='dashboard') c.innerHTML = renderDashboard();
+  else if(view==='items'){ c.innerHTML = renderItems(); fab.classList.remove('hidden'); fab.onclick=()=>openItemForm(); }
+  else if(view==='purchases'){ c.innerHTML = renderPurchases(); fab.classList.remove('hidden'); fab.onclick=()=>openPurchaseForm(); }
+  else if(view==='sales'){ c.innerHTML = renderSales(); fab.classList.remove('hidden'); fab.onclick=()=>openSaleForm(); }
+  else if(view==='customers'){ c.innerHTML = renderCustomers(); fab.classList.remove('hidden'); fab.onclick=()=>openCustomerForm(); }
+  else if(view==='suppliers'){ c.innerHTML = renderSuppliers(); fab.classList.remove('hidden'); fab.onclick=()=>openSupplierForm(); }
+  else if(view==='reports') c.innerHTML = renderReports();
+  else if(view==='alerts') c.innerHTML = renderAlerts();
+  else if(view==='settings'){ c.innerHTML = renderSettings(); }
+  window.scrollTo(0,0);
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  const today = todayStr();
+  const todaySales = state.sales.filter(s=>s.date===today).reduce((a,s)=>a+Number(s.total),0);
+  const todayPurchases = state.purchases.filter(p=>p.date===today).reduce((a,p)=>a+Number(p.total),0);
+  const totalCustomerDebt = state.customers.reduce((a,c)=>a+customerBalance(c.id),0);
+  const totalSupplierDebt = state.suppliers.reduce((a,s)=>a+supplierBalance(s.id),0);
+  return `
+  <div class="page-head"><div><h2>لوحة التحكم</h2><div class="desc">نظرة عامة على حالة الشركة اليوم</div></div></div>
+  <div class="cards-grid">
+    <div class="stat-card"><div class="k">عدد الأصناف</div><div class="v">${state.items.length}</div></div>
+    <div class="stat-card"><div class="k">مبيعات اليوم</div><div class="v">${fmtMoney(todaySales)}</div></div>
+    <div class="stat-card"><div class="k">مشتريات اليوم</div><div class="v">${fmtMoney(todayPurchases)}</div></div>
+    <div class="stat-card ${lowStockItems().length?'warn':''}"><div class="k">أصناف ناقصة</div><div class="v">${lowStockItems().length}</div></div>
+    <div class="stat-card ${expiredItems().length?'danger':'warn'}"><div class="k">منتهي / قريب الصلاحية</div><div class="v">${expiredItems().length + nearExpiryItems().length}</div></div>
+    <div class="stat-card"><div class="k">عدد العملاء</div><div class="v">${state.customers.length}</div></div>
+    <div class="stat-card"><div class="k">عدد الموردين</div><div class="v">${state.suppliers.length}</div></div>
+    <div class="stat-card ${totalCustomerDebt>0?'warn':''}"><div class="k">مستحق على العملاء</div><div class="v">${fmtMoney(totalCustomerDebt)}</div></div>
+    <div class="stat-card ${totalSupplierDebt>0?'danger':''}"><div class="k">مستحق للموردين</div><div class="v">${fmtMoney(totalSupplierDebt)}</div></div>
+  </div>
+  <div class="panel">
+    <h3>آخر الحركات</h3>
+    ${renderRecentActivity()}
+  </div>
+  ${(lowStockItems().length||expiredItems().length||nearExpiryItems().length) ? `
+  <div class="panel">
+    <h3>تنبيهات سريعة</h3>
+    ${renderAlertsList(5)}
+    <div style="text-align:center;margin-top:6px"><span class="hist-link" onclick="render('alerts')">عرض كل التنبيهات ←</span></div>
+  </div>` : ''}
+  `;
+}
+function renderRecentActivity(){
+  const all = [
+    ...state.sales.map(s=>({...s,type:'sale'})),
+    ...state.purchases.map(p=>({...p,type:'purchase'}))
+  ].sort((a,b)=> (b.date+b.id).localeCompare(a.date+a.id)).slice(0,8);
+  if(!all.length) return `<div class="empty-state"><div class="em-ic">📭</div>لا توجد حركات بعد</div>`;
+  return `<div class="table-wrap"><table><thead><tr>
+    <th>التاريخ</th><th>النوع</th><th>الصنف</th><th>الجهة</th><th>الكمية</th><th>الإجمالي</th><th>الحالة</th>
+  </tr></thead><tbody>
+  ${all.map(t=>{
+    const item = itemById(t.itemId);
+    const party = t.type==='sale' ? customerById(t.customerId) : supplierById(t.supplierId);
+    return `<tr>
+      <td>${fmtDate(t.date)}</td>
+      <td>${t.type==='sale' ? '<span class="badge badge-success">منصرف</span>' : '<span class="badge badge-warning">وارد</span>'}</td>
+      <td>${esc(item?item.name:'—')}</td>
+      <td>${esc(party?party.name:'—')}</td>
+      <td>${t.quantity}</td>
+      <td>${fmtMoney(t.total)}</td>
+      <td>${t.paid ? '<span class="badge badge-success">مدفوع</span>' : '<span class="badge badge-danger">آجل</span>'}</td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>`;
+}
+
+/* ================= ITEMS ================= */
+let itemsFilter='';
+let itemsTab='all';
+function renderItems(){
+  let list = state.items.filter(i=> i.name.includes(itemsFilter) || (i.category||'').includes(itemsFilter));
+  if(itemsTab==='low') list = list.filter(i=>Number(i.quantity)<=Number(i.minQuantity||0));
+  if(itemsTab==='expiring') list = list.filter(i=>i.expiryDate && daysUntil(i.expiryDate)<=30);
+  return `
+  <div class="page-head"><div><h2>الأصناف والمخزون</h2><div class="desc">إدارة كل الأصناف والكميات وتواريخ الصلاحية</div></div>
+    <button class="btn btn-accent" onclick="openItemForm()">+ إضافة صنف</button></div>
+  <div class="toolbar">
+    <input type="text" placeholder="ابحث عن صنف..." oninput="itemsFilter=this.value;render('items')" value="${esc(itemsFilter)}">
+  </div>
+  <div class="chip-tabs" style="margin-bottom:14px">
+    <div class="chip ${itemsTab==='all'?'active':''}" onclick="itemsTab='all';render('items')">الكل (${state.items.length})</div>
+    <div class="chip ${itemsTab==='low'?'active':''}" onclick="itemsTab='low';render('items')">كميات ناقصة (${lowStockItems().length})</div>
+    <div class="chip ${itemsTab==='expiring'?'active':''}" onclick="itemsTab='expiring';render('items')">قريبة/منتهية الصلاحية (${expiredItems().length+nearExpiryItems().length})</div>
+  </div>
+  <div class="panel">
+    ${list.length? `<div class="table-wrap"><table><thead><tr>
+      <th>الصنف</th><th>التصنيف</th><th>الوحدة</th><th>الكمية</th><th>الحد الأدنى</th><th>سعر الشراء</th><th>سعر البيع</th><th>الصلاحية</th><th></th>
+    </tr></thead><tbody>
+    ${list.map(i=>{
+      const dLeft = i.expiryDate ? daysUntil(i.expiryDate) : null;
+      let expBadge = '<span class="badge badge-muted">—</span>';
+      if(dLeft!==null){
+        if(dLeft<0) expBadge = `<span class="badge badge-danger">منتهي منذ ${Math.abs(dLeft)} يوم</span>`;
+        else if(dLeft<=30) expBadge = `<span class="badge badge-warning">باقي ${dLeft} يوم</span>`;
+        else expBadge = `<span class="badge badge-success">${fmtDate(i.expiryDate)}</span>`;
+      }
+      const low = Number(i.quantity)<=Number(i.minQuantity||0);
+      return `<tr>
+        <td><b>${esc(i.name)}</b></td>
+        <td>${esc(i.category||'—')}</td>
+        <td>${esc(i.unit||'—')}</td>
+        <td>${low?'<span class="badge badge-danger">':''}${i.quantity}${low?'</span>':''}</td>
+        <td>${i.minQuantity||0}</td>
+        <td>${fmtMoney(i.purchasePrice)}</td>
+        <td>${fmtMoney(i.sellPrice)}</td>
+        <td>${expBadge}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="openItemForm('${i.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteItem('${i.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">📦</div>لا توجد أصناف مطابقة</div>`}
+  </div>`;
+}
+function openItemForm(id){
+  const it = id ? itemById(id) : null;
+  openModal(`
+    <h3>${it?'تعديل صنف':'إضافة صنف جديد'}</h3>
+    <form id="itemForm" onsubmit="return saveItem(event,'${id||''}')">
+      <div class="form-grid">
+        <div class="field full"><label>اسم الصنف</label><input required id="f_name" value="${esc(it?.name||'')}"></div>
+        <div class="field"><label>التصنيف</label><input id="f_cat" value="${esc(it?.category||'')}" placeholder="مثال: مواد غذائية جافة"></div>
+        <div class="field"><label>الوحدة</label><input id="f_unit" value="${esc(it?.unit||'')}" placeholder="كرتون / كيلو / قطعة"></div>
+        <div class="field"><label>الكمية الحالية</label><input required type="number" step="any" id="f_qty" value="${it?.quantity??0}"></div>
+        <div class="field"><label>الحد الأدنى للتنبيه</label><input type="number" step="any" id="f_min" value="${it?.minQuantity??0}"></div>
+        <div class="field"><label>سعر الشراء</label><input type="number" step="any" id="f_pp" value="${it?.purchasePrice??0}"></div>
+        <div class="field"><label>سعر البيع</label><input type="number" step="any" id="f_sp" value="${it?.sellPrice??0}"></div>
+        <div class="field full"><label>تاريخ انتهاء الصلاحية</label><input type="date" id="f_exp" value="${it?.expiryDate||''}"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ</button>
+      </div>
+    </form>
+  `);
+}
+function saveItem(e,id){
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('f_name').value.trim(),
+    category: document.getElementById('f_cat').value.trim(),
+    unit: document.getElementById('f_unit').value.trim(),
+    quantity: Number(document.getElementById('f_qty').value)||0,
+    minQuantity: Number(document.getElementById('f_min').value)||0,
+    purchasePrice: Number(document.getElementById('f_pp').value)||0,
+    sellPrice: Number(document.getElementById('f_sp').value)||0,
+    expiryDate: document.getElementById('f_exp').value || null,
+  };
+  if(id){
+    Object.assign(itemById(id), data);
+  }else{
+    state.items.push({id:uid(), ...data});
+  }
+  saveKey('items'); closeModal(); render('items');
+  return false;
+}
+function deleteItem(id){
+  if(!confirm('هل تريد حذف هذا الصنف؟')) return;
+  state.items = state.items.filter(i=>i.id!==id);
+  saveKey('items'); render('items');
+}
+
+/* ================= PURCHASES (الوارد) ================= */
+function renderPurchases(){
+  const list = [...state.purchases].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+  const total = state.purchases.reduce((a,p)=>a+Number(p.total),0);
+  return `
+  <div class="page-head"><div><h2>الوارد (المشتريات)</h2><div class="desc">تسجيل الكميات الواردة من الموردين — إجمالي الوارد: ${fmtMoney(total)}</div></div>
+    <button class="btn btn-accent" onclick="openPurchaseForm()">+ تسجيل وارد</button></div>
+  <div class="panel">
+    ${list.length? `<div class="table-wrap"><table><thead><tr>
+      <th>التاريخ</th><th>المورد</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>الحالة</th><th></th>
+    </tr></thead><tbody>
+    ${list.map(p=>{
+      const it=itemById(p.itemId), sup=supplierById(p.supplierId);
+      return `<tr>
+        <td>${fmtDate(p.date)}</td><td>${esc(sup?sup.name:'—')}</td><td>${esc(it?it.name:'—')}</td>
+        <td>${p.quantity}</td><td>${fmtMoney(p.unitPrice)}</td><td>${fmtMoney(p.total)}</td>
+        <td>${p.paid?'<span class="badge badge-success">مدفوع</span>':'<span class="badge badge-danger">آجل</span>'}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="togglePaid('purchases','${p.id}')">💰</button>
+          <button class="icon-btn del" onclick="deletePurchase('${p.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">⬇️</div>لا يوجد وارد مسجل بعد</div>`}
+  </div>`;
+}
+function openPurchaseForm(){
+  if(!state.items.length){ alert('أضف صنفاً واحداً على الأقل أولاً من صفحة الأصناف'); return; }
+  openModal(`
+    <h3>تسجيل وارد جديد</h3>
+    <form onsubmit="return savePurchase(event)">
+      <div class="form-grid">
+        <div class="field full"><label>التاريخ</label><input required type="date" id="p_date" value="${todayStr()}"></div>
+        <div class="field full"><label>المورد</label>
+          <select id="p_sup"><option value="">— بدون مورد —</option>
+          ${state.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
+        </div>
+        <div class="field full"><label>الصنف</label>
+          <select required id="p_item" onchange="document.getElementById('p_price').value = itemById(this.value)?.purchasePrice||0">
+          <option value="">اختر الصنف</option>
+          ${state.items.map(i=>`<option value="${i.id}">${esc(i.name)}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>الكمية</label><input required type="number" step="any" id="p_qty" value="1"></div>
+        <div class="field"><label>سعر الوحدة</label><input required type="number" step="any" id="p_price" value="0"></div>
+        <div class="field full checkbox-row"><input type="checkbox" id="p_paid" checked><label for="p_paid">تم الدفع نقداً</label></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ</button>
+      </div>
+    </form>
+  `);
+}
+function savePurchase(e){
+  e.preventDefault();
+  const itemId = document.getElementById('p_item').value;
+  const qty = Number(document.getElementById('p_qty').value)||0;
+  const price = Number(document.getElementById('p_price').value)||0;
+  if(!itemId || qty<=0){ alert('من فضلك اختر الصنف وكمية صحيحة'); return false; }
+  const rec = {
+    id:uid(), date:document.getElementById('p_date').value, supplierId:document.getElementById('p_sup').value||null,
+    itemId, quantity:qty, unitPrice:price, total:qty*price, paid:document.getElementById('p_paid').checked
+  };
+  state.purchases.push(rec);
+  const it = itemById(itemId);
+  it.quantity = Number(it.quantity) + qty;
+  saveKey('purchases'); saveKey('items'); closeModal(); render('purchases');
+  return false;
+}
+function deletePurchase(id){
+  if(!confirm('حذف حركة الوارد؟ سيتم خصم الكمية من المخزون.')) return;
+  const p = state.purchases.find(x=>x.id===id);
+  if(p){ const it=itemById(p.itemId); if(it) it.quantity = Number(it.quantity)-Number(p.quantity); }
+  state.purchases = state.purchases.filter(x=>x.id!==id);
+  saveKey('purchases'); saveKey('items'); render('purchases');
+}
+
+/* ================= SALES (المنصرف) ================= */
+function renderSales(){
+  const list = [...state.sales].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+  const total = state.sales.reduce((a,s)=>a+Number(s.total),0);
+  return `
+  <div class="page-head"><div><h2>المنصرف (المبيعات)</h2><div class="desc">تسجيل الكميات المباعة للعملاء — إجمالي المبيعات: ${fmtMoney(total)}</div></div>
+    <button class="btn btn-accent" onclick="openSaleForm()">+ تسجيل منصرف</button></div>
+  <div class="panel">
+    ${list.length? `<div class="table-wrap"><table><thead><tr>
+      <th>التاريخ</th><th>العميل</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>الحالة</th><th></th>
+    </tr></thead><tbody>
+    ${list.map(s=>{
+      const it=itemById(s.itemId), cu=customerById(s.customerId);
+      return `<tr>
+        <td>${fmtDate(s.date)}</td><td>${esc(cu?cu.name:'—')}</td><td>${esc(it?it.name:'—')}</td>
+        <td>${s.quantity}</td><td>${fmtMoney(s.unitPrice)}</td><td>${fmtMoney(s.total)}</td>
+        <td>${s.paid?'<span class="badge badge-success">مدفوع</span>':'<span class="badge badge-danger">آجل</span>'}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="togglePaid('sales','${s.id}')">💰</button>
+          <button class="icon-btn del" onclick="deleteSale('${s.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">⬆️</div>لا يوجد منصرف مسجل بعد</div>`}
+  </div>`;
+}
+function openSaleForm(){
+  if(!state.items.length){ alert('أضف صنفاً واحداً على الأقل أولاً من صفحة الأصناف'); return; }
+  openModal(`
+    <h3>تسجيل منصرف جديد</h3>
+    <form onsubmit="return saveSale(event)">
+      <div class="form-grid">
+        <div class="field full"><label>التاريخ</label><input required type="date" id="s_date" value="${todayStr()}"></div>
+        <div class="field full"><label>العميل</label>
+          <select id="s_cus"><option value="">— بدون عميل —</option>
+          ${state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+        </div>
+        <div class="field full"><label>الصنف</label>
+          <select required id="s_item" onchange="document.getElementById('s_price').value = itemById(this.value)?.sellPrice||0">
+          <option value="">اختر الصنف</option>
+          ${state.items.map(i=>`<option value="${i.id}">${esc(i.name)} (متاح: ${i.quantity})</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>الكمية</label><input required type="number" step="any" id="s_qty" value="1"></div>
+        <div class="field"><label>سعر الوحدة</label><input required type="number" step="any" id="s_price" value="0"></div>
+        <div class="field full checkbox-row"><input type="checkbox" id="s_paid" checked><label for="s_paid">تم التحصيل نقداً</label></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ</button>
+      </div>
+    </form>
+  `);
+}
+function saveSale(e){
+  e.preventDefault();
+  const itemId = document.getElementById('s_item').value;
+  const qty = Number(document.getElementById('s_qty').value)||0;
+  const price = Number(document.getElementById('s_price').value)||0;
+  const it = itemById(itemId);
+  if(!itemId || qty<=0){ alert('من فضلك اختر الصنف وكمية صحيحة'); return false; }
+  if(it && qty > Number(it.quantity)){
+    if(!confirm(`الكمية المطلوبة (${qty}) أكبر من الكمية المتاحة (${it.quantity}). هل تريد المتابعة؟`)) return false;
+  }
+  const rec = {
+    id:uid(), date:document.getElementById('s_date').value, customerId:document.getElementById('s_cus').value||null,
+    itemId, quantity:qty, unitPrice:price, total:qty*price, paid:document.getElementById('s_paid').checked
+  };
+  state.sales.push(rec);
+  if(it) it.quantity = Number(it.quantity) - qty;
+  saveKey('sales'); saveKey('items'); closeModal(); render('sales');
+  return false;
+}
+function deleteSale(id){
+  if(!confirm('حذف حركة المنصرف؟ سيتم إرجاع الكمية للمخزون.')) return;
+  const s = state.sales.find(x=>x.id===id);
+  if(s){ const it=itemById(s.itemId); if(it) it.quantity = Number(it.quantity)+Number(s.quantity); }
+  state.sales = state.sales.filter(x=>x.id!==id);
+  saveKey('sales'); saveKey('items'); render('sales');
+}
+function togglePaid(kind,id){
+  const rec = state[kind].find(x=>x.id===id);
+  if(rec){ rec.paid = !rec.paid; saveKey(kind); render(kind); }
+}
+
+/* ================= CUSTOMERS ================= */
+function renderCustomers(){
+  return `
+  <div class="page-head"><div><h2>العملاء</h2><div class="desc">بيانات العملاء والمديونيات</div></div>
+    <button class="btn btn-accent" onclick="openCustomerForm()">+ إضافة عميل</button></div>
+  <div class="panel">
+    ${state.customers.length? `<div class="table-wrap"><table><thead><tr>
+      <th>الاسم</th><th>الهاتف</th><th>العنوان</th><th>المستحق (آجل)</th><th></th>
+    </tr></thead><tbody>
+    ${state.customers.map(c=>{
+      const bal = customerBalance(c.id);
+      return `<tr>
+        <td><b>${esc(c.name)}</b></td><td>${esc(c.phone||'—')}</td><td>${esc(c.address||'—')}</td>
+        <td>${bal>0?`<span class="badge badge-danger">${fmtMoney(bal)}</span>`:`<span class="badge badge-success">لا يوجد</span>`}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="showHistory('customer','${c.id}')">📜</button>
+          <button class="icon-btn" onclick="openCustomerForm('${c.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteCustomer('${c.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">👥</div>لا يوجد عملاء بعد</div>`}
+  </div>`;
+}
+function openCustomerForm(id){
+  const c = id ? customerById(id) : null;
+  openModal(`
+    <h3>${c?'تعديل عميل':'إضافة عميل جديد'}</h3>
+    <form onsubmit="return saveCustomer(event,'${id||''}')">
+      <div class="form-grid">
+        <div class="field full"><label>الاسم</label><input required id="c_name" value="${esc(c?.name||'')}"></div>
+        <div class="field"><label>الهاتف</label><input id="c_phone" value="${esc(c?.phone||'')}"></div>
+        <div class="field"><label>العنوان</label><input id="c_addr" value="${esc(c?.address||'')}"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ</button>
+      </div>
+    </form>
+  `);
+}
+function saveCustomer(e,id){
+  e.preventDefault();
+  const data = {name:document.getElementById('c_name').value.trim(), phone:document.getElementById('c_phone').value.trim(), address:document.getElementById('c_addr').value.trim()};
+  if(id) Object.assign(customerById(id), data);
+  else state.customers.push({id:uid(), ...data});
+  saveKey('customers'); closeModal(); render('customers');
+  return false;
+}
+function deleteCustomer(id){
+  if(!confirm('حذف هذا العميل؟ (لن يتم حذف حركات المبيعات المرتبطة به)')) return;
+  state.customers = state.customers.filter(c=>c.id!==id);
+  saveKey('customers'); render('customers');
+}
+
+/* ================= SUPPLIERS ================= */
+function renderSuppliers(){
+  return `
+  <div class="page-head"><div><h2>الموردين</h2><div class="desc">بيانات الموردين والمستحقات عليهم</div></div>
+    <button class="btn btn-accent" onclick="openSupplierForm()">+ إضافة مورد</button></div>
+  <div class="panel">
+    ${state.suppliers.length? `<div class="table-wrap"><table><thead><tr>
+      <th>الاسم</th><th>الهاتف</th><th>العنوان</th><th>المستحق عليه (آجل)</th><th></th>
+    </tr></thead><tbody>
+    ${state.suppliers.map(s=>{
+      const bal = supplierBalance(s.id);
+      return `<tr>
+        <td><b>${esc(s.name)}</b></td><td>${esc(s.phone||'—')}</td><td>${esc(s.address||'—')}</td>
+        <td>${bal>0?`<span class="badge badge-danger">${fmtMoney(bal)}</span>`:`<span class="badge badge-success">لا يوجد</span>`}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn" onclick="showHistory('supplier','${s.id}')">📜</button>
+          <button class="icon-btn" onclick="openSupplierForm('${s.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteSupplier('${s.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">🚚</div>لا يوجد موردين بعد</div>`}
+  </div>`;
+}
+function openSupplierForm(id){
+  const s = id ? supplierById(id) : null;
+  openModal(`
+    <h3>${s?'تعديل مورد':'إضافة مورد جديد'}</h3>
+    <form onsubmit="return saveSupplier(event,'${id||''}')">
+      <div class="form-grid">
+        <div class="field full"><label>الاسم</label><input required id="su_name" value="${esc(s?.name||'')}"></div>
+        <div class="field"><label>الهاتف</label><input id="su_phone" value="${esc(s?.phone||'')}"></div>
+        <div class="field"><label>العنوان</label><input id="su_addr" value="${esc(s?.address||'')}"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ</button>
+      </div>
+    </form>
+  `);
+}
+function saveSupplier(e,id){
+  e.preventDefault();
+  const data = {name:document.getElementById('su_name').value.trim(), phone:document.getElementById('su_phone').value.trim(), address:document.getElementById('su_addr').value.trim()};
+  if(id) Object.assign(supplierById(id), data);
+  else state.suppliers.push({id:uid(), ...data});
+  saveKey('suppliers'); closeModal(); render('suppliers');
+  return false;
+}
+function deleteSupplier(id){
+  if(!confirm('حذف هذا المورد؟ (لن يتم حذف حركات الوارد المرتبطة به)')) return;
+  state.suppliers = state.suppliers.filter(s=>s.id!==id);
+  saveKey('suppliers'); render('suppliers');
+}
+
+function showHistory(kind,id){
+  const isCust = kind==='customer';
+  const person = isCust ? customerById(id) : supplierById(id);
+  const list = isCust ? state.sales.filter(s=>s.customerId===id) : state.purchases.filter(p=>p.supplierId===id);
+  const sorted = [...list].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+  openModal(`
+    <h3>سجل حركات: ${esc(person.name)}</h3>
+    ${sorted.length? `<div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>الصنف</th><th>الكمية</th><th>الإجمالي</th><th>الحالة</th></tr></thead><tbody>
+    ${sorted.map(t=>{
+      const it=itemById(t.itemId);
+      return `<tr><td>${fmtDate(t.date)}</td><td>${esc(it?it.name:'—')}</td><td>${t.quantity}</td><td>${fmtMoney(t.total)}</td>
+      <td>${t.paid?'<span class="badge badge-success">مدفوع</span>':'<span class="badge badge-danger">آجل</span>'}</td></tr>`;
+    }).join('')}
+    </tbody></table></div>` : `<div class="empty-state">لا توجد حركات مسجلة</div>`}
+    <div class="modal-actions"><button class="btn btn-outline btn-block" onclick="closeModal()">إغلاق</button></div>
+  `);
+}
+
+/* ================= REPORTS (الجرد) ================= */
+function getRange(type, refDate){
+  const d = new Date(refDate+'T00:00:00');
+  let start, end;
+  if(type==='daily'){ start=new Date(d); end=new Date(d); }
+  else if(type==='weekly'){
+    const dow = d.getDay(); // 0=Sun..6=Sat ; week starts Saturday(6)
+    const offset = (dow+1)%7; // days since Saturday
+    start = new Date(d); start.setDate(d.getDate()-offset);
+    end = new Date(start); end.setDate(start.getDate()+6);
+  } else if(type==='monthly'){
+    start = new Date(d.getFullYear(), d.getMonth(), 1);
+    end = new Date(d.getFullYear(), d.getMonth()+1, 0);
+  } else if(type==='yearly'){
+    start = new Date(d.getFullYear(),0,1);
+    end = new Date(d.getFullYear(),11,31);
+  }
+  const toISO = x=>x.toISOString().slice(0,10);
+  return {start:toISO(start), end:toISO(end)};
+}
+function renderReports(){
+  const {start,end} = getRange(currentReportType, currentReportDate);
+  const purchasesInRange = state.purchases.filter(p=>p.date>=start && p.date<=end);
+  const salesInRange = state.sales.filter(s=>s.date>=start && s.date<=end);
+  const totalPurchases = purchasesInRange.reduce((a,p)=>a+Number(p.total),0);
+  const totalSales = salesInRange.reduce((a,s)=>a+Number(s.total),0);
+
+  const byItem = {};
+  state.items.forEach(i=> byItem[i.id] = {name:i.name, unit:i.unit, in:0, out:0, current:i.quantity} );
+  purchasesInRange.forEach(p=>{ if(byItem[p.itemId]) byItem[p.itemId].in += Number(p.quantity); });
+  salesInRange.forEach(s=>{ if(byItem[s.itemId]) byItem[s.itemId].out += Number(s.quantity); });
+  const itemRows = Object.values(byItem).filter(r=>r.in>0 || r.out>0);
+
+  const typeLabels = {daily:'يومي', weekly:'أسبوعي', monthly:'شهري', yearly:'سنوي'};
+
+  return `
+  <div class="page-head"><div><h2>الجرد والتقارير</h2><div class="desc">تقرير ${typeLabels[currentReportType]} للحركة والمخزون</div></div>
+    <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button></div>
+  <div class="chip-tabs" style="margin-bottom:12px">
+    ${['daily','weekly','monthly','yearly'].map(t=>`<div class="chip ${currentReportType===t?'active':''}" onclick="currentReportType='${t}';render('reports')">${typeLabels[t]}</div>`).join('')}
+  </div>
+  <div class="toolbar">
+    <div class="field" style="margin-bottom:0"><label>${currentReportType==='yearly'?'اختر أي تاريخ من السنة':'اختر التاريخ'}</label>
+    <input type="date" value="${currentReportDate}" onchange="currentReportDate=this.value;render('reports')"></div>
+  </div>
+  <div class="panel"><div class="desc" style="margin-bottom:10px">الفترة من ${fmtDate(start)} إلى ${fmtDate(end)}</div>
+  <div class="cards-grid">
+    <div class="stat-card"><div class="k">إجمالي الوارد</div><div class="v">${fmtMoney(totalPurchases)}</div></div>
+    <div class="stat-card"><div class="k">إجمالي المنصرف</div><div class="v">${fmtMoney(totalSales)}</div></div>
+    <div class="stat-card ${(totalSales-totalPurchases)<0?'danger':''}"><div class="k">صافي الحركة النقدية</div><div class="v">${fmtMoney(totalSales-totalPurchases)}</div></div>
+  </div>
+  </div>
+  <div class="panel">
+    <h3>حركة الأصناف خلال الفترة</h3>
+    ${itemRows.length? `<div class="table-wrap"><table><thead><tr>
+      <th>الصنف</th><th>الوحدة</th><th>وارد</th><th>منصرف</th><th>صافي الحركة</th><th>الرصيد الحالي بالمخزن</th>
+    </tr></thead><tbody>
+    ${itemRows.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td>${esc(r.unit||'—')}</td><td>${r.in}</td><td>${r.out}</td><td>${r.in-r.out}</td><td>${r.current}</td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty-state"><div class="em-ic">📊</div>لا توجد حركة مسجلة خلال هذه الفترة</div>`}
+  </div>
+  <div class="panel">
+    <h3>حالة المخزون الحالية (وقت إنشاء التقرير)</h3>
+    <div class="cards-grid">
+      <div class="stat-card warn"><div class="k">أصناف تحت الحد الأدنى</div><div class="v">${lowStockItems().length}</div></div>
+      <div class="stat-card danger"><div class="k">أصناف منتهية الصلاحية</div><div class="v">${expiredItems().length}</div></div>
+      <div class="stat-card warn"><div class="k">أصناف قريبة الانتهاء (٣٠ يوم)</div><div class="v">${nearExpiryItems().length}</div></div>
+    </div>
+  </div>
+  `;
+}
+
+/* ================= ALERTS ================= */
+function renderAlertsList(limit){
+  const exp = expiredItems();
+  const near = nearExpiryItems();
+  const low = lowStockItems();
+  let html = '';
+  exp.slice(0,limit||999).forEach(i=> html += `<div class="alert-item danger"><span class="ic">⛔</span><div class="txt"><b>${esc(i.name)} — منتهي الصلاحية</b><span>انتهت الصلاحية في ${fmtDate(i.expiryDate)}</span></div></div>`);
+  near.slice(0,limit||999).forEach(i=> html += `<div class="alert-item warning"><span class="ic">⏳</span><div class="txt"><b>${esc(i.name)} — قريب الانتهاء</b><span>باقي ${daysUntil(i.expiryDate)} يوم على انتهاء الصلاحية</span></div></div>`);
+  low.slice(0,limit||999).forEach(i=> html += `<div class="alert-item warning"><span class="ic">📉</span><div class="txt"><b>${esc(i.name)} — كمية ناقصة</b><span>الكمية الحالية ${i.quantity} أقل من أو تساوي الحد الأدنى ${i.minQuantity||0}</span></div></div>`);
+  if(!html) html = `<div class="empty-state"><div class="em-ic">✅</div>لا توجد تنبيهات حالياً</div>`;
+  return html;
+}
+function renderAlerts(){
+  return `
+  <div class="page-head"><div><h2>التنبيهات</h2><div class="desc">الأصناف منتهية أو قريبة الصلاحية، والكميات الناقصة</div></div></div>
+  <div class="panel"><h3>كل التنبيهات</h3>${renderAlertsList()}</div>
+  `;
+}
+
+/* ================= SETTINGS / BACKUP ================= */
+function renderSettings(){
+  const connected = !!gAccessToken;
+  const email = gUserEmail || '';
+  const lastBackup = localStorage.getItem('dekroure_drive_last_backup');
+  return `
+  <div class="page-head"><div><h2>الإعدادات والنسخ الاحتياطي</h2><div class="desc">النسخ الاحتياطي محلياً وعلى جوجل درايف</div></div></div>
+
+  <div class="panel">
+    <h3>📁 نسخة احتياطية محلية (ملف على الجهاز)</h3>
+    <p class="desc" style="margin-bottom:12px">تنزيل نسخة كملف، أو استعادة نسخة من ملف محفوظ على الجهاز.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="backupData()">💾 تنزيل نسخة احتياطية</button>
+      <button class="btn btn-outline" onclick="document.getElementById('restoreFile').click()">🔄 استعادة من ملف</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>☁️ مزامنة جوجل درايف (بين أكثر من موبايل)</h3>
+    <p class="desc" style="margin-bottom:12px">سجل دخول بحساب جوجل الشركة على كل جهاز، وبعدها تقدر ترفع نسخة أو تستعيد آخر نسخة محفوظة على نفس الحساب من أي موبايل.</p>
+
+    ${connected ? `
+      <div class="badge badge-success" style="margin-bottom:12px">متصل${email?': '+esc(email):''}</div><br>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-primary" onclick="driveBackupNow()">⬆️ رفع نسخة على درايف الآن</button>
+        <button class="btn btn-outline" onclick="driveRestoreLatest()">⬇️ استعادة آخر نسخة من درايف</button>
+        <button class="btn btn-danger" onclick="disconnectGoogle()">قطع الاتصال</button>
+      </div>
+      ${lastBackup ? `<div class="desc" style="margin-top:10px">آخر رفع على درايف: ${esc(lastBackup)}</div>` : ''}
+    ` : `
+      <button class="btn btn-primary btn-block" onclick="connectGoogle()">تسجيل الدخول بجوجل</button>
+    `}
+  </div>
+  `;
+}
+
+/* ================= INIT ================= */
+(async function init(){
+  await loadAll();
+})();
+window.addEventListener('DOMContentLoaded', async ()=>{
+  await loadAll();
+  renderNav();
+});
+</script>
+
+<script>
+function backupData(){
+  try{
+    const payload = {
+      app: 'نظام حسابات شركة الدكروري',
+      version: 1,
+      createdAt: new Date().toISOString(),
+      state: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const name = `نسخة-احتياطية-الدكروري-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`;
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    alert('تم إنشاء النسخة الاحتياطية بنجاح.');
+  }catch(e){
+    console.error(e);
+    alert('تعذر إنشاء النسخة الاحتياطية.');
+  }
+}
+
+async function restoreData(event){
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if(!file) return;
+
+  if(!confirm('سيتم استبدال البيانات الحالية بالنسخة الاحتياطية. هل تريد المتابعة؟')) return;
+
+  try{
+    const raw = await file.text();
+    const payload = JSON.parse(raw);
+
+    if(!payload || !payload.state || typeof payload.state !== 'object'){
+      throw new Error('ملف النسخة الاحتياطية غير صالح');
+    }
+
+    for(const k of KEYS){
+      const value = Array.isArray(payload.state[k]) ? payload.state[k] : [];
+      state[k] = value;
+      localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(value));
+    }
+
+    alert('تمت استعادة البيانات بنجاح. سيتم تحديث البرنامج.');
+    location.reload();
+  }catch(e){
+    console.error(e);
+    alert('فشل الاستعادة: ملف النسخة الاحتياطية غير صالح أو تالف.');
+  }
+}
+
+/* ================= GOOGLE DRIVE SYNC ================= */
+const DRIVE_FILE_NAME = 'دكروري-نسخة-احتياطية.json';
+const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+const DEFAULT_GCLIENT_ID = '941736124236-ppvnnbj5bltqle91qkh4grngl9fdhpk4.apps.googleusercontent.com';
+let gClientId = DEFAULT_GCLIENT_ID;
+let gAccessToken = null;
+let gUserEmail = null;
+let gTokenClient = null;
+
+function buildBackupPayload(){
+  return {
+    app: 'نظام حسابات شركة الدكروري',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    state: state
+  };
+}
+
+function initGTokenClient(callback){
+  if(!window.google || !google.accounts || !google.accounts.oauth2){
+    alert('تعذر تحميل خدمة تسجيل دخول جوجل، تأكد من اتصالك بالإنترنت وحاول مرة أخرى.');
+    return null;
+  }
+  return google.accounts.oauth2.initTokenClient({
+    client_id: gClientId,
+    scope: DRIVE_SCOPES,
+    callback: callback
+  });
+}
+
+function connectGoogle(){
+  if(!gClientId){ alert('من فضلك احفظ Client ID أولاً.'); return; }
+  gTokenClient = initGTokenClient(async (resp)=>{
+    if(resp.error){ alert('فشل تسجيل الدخول: ' + resp.error); return; }
+    gAccessToken = resp.access_token;
+    try{
+      const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers:{ Authorization: 'Bearer ' + gAccessToken }
+      });
+      const info = await r.json();
+      gUserEmail = info.email || null;
+    }catch(e){ gUserEmail = null; }
+    render('settings');
+  });
+  if(!gTokenClient) return;
+  gTokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function disconnectGoogle(){
+  if(gAccessToken && window.google && google.accounts && google.accounts.oauth2){
+    google.accounts.oauth2.revoke(gAccessToken, ()=>{});
+  }
+  gAccessToken = null;
+  gUserEmail = null;
+  render('settings');
+}
+
+async function driveFindBackupFile(){
+  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and trashed=false`);
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name,modifiedTime)`, {
+    headers:{ Authorization: 'Bearer ' + gAccessToken }
+  });
+  if(!r.ok) throw new Error('drive list failed');
+  const data = await r.json();
+  return (data.files && data.files[0]) || null;
+}
+
+async function driveBackupNow(){
+  if(!gAccessToken){ alert('من فضلك سجل الدخول بجوجل أولاً.'); return; }
+  try{
+    const existing = await driveFindBackupFile();
+    const payload = JSON.stringify(buildBackupPayload(), null, 2);
+    const metadata = { name: DRIVE_FILE_NAME, mimeType: 'application/json' };
+    const boundary = 'dekroure_boundary_' + Date.now();
+    const body =
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(existing?{}:metadata)}\r\n` +
+      `--${boundary}\r\nContent-Type: application/json\r\n\r\n${payload}\r\n` +
+      `--${boundary}--`;
+    const url = existing
+      ? `https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=multipart`
+      : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+    const r = await fetch(url, {
+      method: existing ? 'PATCH' : 'POST',
+      headers:{
+        Authorization: 'Bearer ' + gAccessToken,
+        'Content-Type': `multipart/related; boundary=${boundary}`
+      },
+      body: body
+    });
+    if(!r.ok) throw new Error('upload failed: ' + r.status);
+    const now = new Date().toLocaleString('ar-EG');
+    localStorage.setItem('dekroure_drive_last_backup', now);
+    alert('تم رفع النسخة الاحتياطية على جوجل درايف بنجاح.');
+    render('settings');
+  }catch(e){
+    console.error(e);
+    alert('تعذر رفع النسخة الاحتياطية على درايف. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+  }
+}
+
+async function driveRestoreLatest(){
+  if(!gAccessToken){ alert('من فضلك سجل الدخول بجوجل أولاً.'); return; }
+  try{
+    const existing = await driveFindBackupFile();
+    if(!existing){ alert('لا توجد نسخة احتياطية محفوظة على درايف بعد.'); return; }
+    if(!confirm('سيتم استبدال البيانات الحالية بآخر نسخة محفوظة على جوجل درايف. هل تريد المتابعة؟')) return;
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`, {
+      headers:{ Authorization: 'Bearer ' + gAccessToken }
+    });
+    if(!r.ok) throw new Error('download failed');
+    const payload = await r.json();
+    if(!payload || !payload.state || typeof payload.state !== 'object'){
+      throw new Error('invalid backup file');
+    }
+    for(const k of KEYS){
+      const value = Array.isArray(payload.state[k]) ? payload.state[k] : [];
+      state[k] = value;
+      localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(value));
+    }
+    alert('تمت استعادة البيانات من جوجل درايف بنجاح. سيتم تحديث البرنامج.');
+    location.reload();
+  }catch(e){
+    console.error(e);
+    alert('تعذر استعادة النسخة من درايف. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+  }
+}
+
+/* ================= PWA / OFFLINE INSTALL ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(e=>console.error('SW register failed', e));
+  });
+}
+</script>
+
+</body>
+</html>

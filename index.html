@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>شركة الدكروري للمواد الغذائية | نظام الحسابات</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2C4A5E">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الدكروري">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --navy:#2C4A5E;
+  --navy-dark:#1E3644;
+  --navy-light:#3C6280;
+  --gold:#F2B134;
+  --bg:#EEF2F5;
+  --card:#FFFFFF;
+  --text:#1C2B35;
+  --muted:#6B7C87;
+  --border:#DCE4EA;
+  --danger:#D64545;
+  --success:#2E9E5B;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);direction:rtl}
+input,select,textarea,button{font-family:inherit}
+button{cursor:pointer}
+a{color:var(--navy-light);text-decoration:none}
+.hidden{display:none !important}
+
+/* ===== LOGIN ===== */
+#login-screen{min-height:100vh;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-dark) 100%);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:var(--card);border-radius:20px;padding:36px 28px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
+.login-logo{width:96px;height:96px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.login-card h1{font-size:20px;margin:0 0 4px}
+.login-card .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.field{text-align:right;margin-bottom:16px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#F7F9FA;color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--navy-light)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer}
+.btn-block{width:100%}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:active{background:var(--navy-dark)}
+.btn-outline{background:#fff;border:1px solid var(--navy);color:var(--navy)}
+.btn-accent{background:var(--gold);color:var(--navy-dark)}
+.btn-danger{background:#FBE4E4;color:var(--danger)}
+.login-error{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:4px}
+
+/* ===== APP SHELL ===== */
+#app{min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.topbar .title-wrap{flex:1;text-align:center}
+.topbar .title-wrap h2{margin:0;font-size:17px}
+.topbar .title-wrap .desc{font-size:11px;opacity:.75;margin-top:2px}
+.icon-btn{background:rgba(255,255,255,.12);border:none;color:#fff;width:38px;height:38px;border-radius:10px;font-size:18px;display:flex;align-items:center;justify-content:center}
+.back-btn{background:none;border:none;color:#fff;font-size:20px}
+
+/* drawer */
+#drawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:none}
+#drawer{position:fixed;top:0;right:0;height:100%;width:78%;max-width:300px;background:var(--navy-dark);color:#fff;z-index:41;transform:translateX(100%);transition:transform .25s;padding:20px 0;overflow-y:auto}
+#drawer.open{transform:translateX(0)}
+#drawerOverlay.open{display:block}
+.drawer-head{padding:0 20px 18px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:10px}
+.drawer-head .lg{width:56px;height:56px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.drawer-head h3{margin:0;font-size:15px}
+.drawer-head .sub{font-size:11px;opacity:.7}
+.nav-item{display:flex;align-items:center;gap:12px;padding:13px 20px;color:#fff;opacity:.85;font-size:14.5px}
+.nav-item.active{background:rgba(255,255,255,.08);opacity:1;border-right:3px solid var(--gold)}
+.nav-item .ic{font-size:18px;width:22px;text-align:center}
+.logout-item{margin-top:10px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px;color:#FF9B9B}
+
+main{flex:1;padding:16px;padding-bottom:90px;max-width:720px;margin:0 auto;width:100%}
+
+/* ===== DASHBOARD ===== */
+.dash-tile{border-radius:16px;overflow:hidden;position:relative;height:120px;display:flex;align-items:flex-end;background-size:cover;background-position:center;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.dash-tile.full{height:150px}
+.dash-tile .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(44,74,94,0) 40%,rgba(30,54,68,.85) 100%)}
+.dash-tile .label{position:relative;z-index:1;color:#fff;font-weight:700;font-size:15px;padding:12px 16px}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dash-grid .dash-tile{margin-bottom:0}
+
+/* ===== SEARCH / TABLE ===== */
+.search-box{width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:12px;background:#fff;margin-bottom:14px;font-size:15px}
+.search-label{font-size:13px;color:var(--muted);margin-bottom:6px}
+table.list-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+table.list-table th{background:var(--navy);color:#fff;padding:12px 10px;font-size:13px;text-align:center;font-weight:600}
+table.list-table th.sortable{cursor:pointer;user-select:none}
+table.list-table td{padding:12px 10px;text-align:center;border-bottom:1px solid var(--border);font-size:14px}
+table.list-table tr:last-child td{border-bottom:none}
+table.list-table tr:active{background:#F5F8FA}
+
+.fab{position:fixed;bottom:24px;left:20px;width:56px;height:56px;border-radius:50%;background:var(--navy);color:#fff;border:none;font-size:26px;box-shadow:0 6px 16px rgba(44,74,94,.4);z-index:15;display:flex;align-items:center;justify-content:center}
+
+.empty-state{text-align:center;color:var(--muted);padding:50px 20px;font-size:14px}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,30,38,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:400px;overflow:hidden}
+.modal-title{background:#F5F8FA;padding:16px;text-align:center;font-weight:700;border-bottom:1px solid var(--border)}
+.modal-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.modal-row label{font-size:14px;color:var(--muted)}
+.modal-row input{width:130px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:15px}
+.modal-actions{display:flex}
+.modal-actions button{flex:1;padding:15px;border:none;background:#fff;font-weight:700;font-size:15px}
+.modal-actions .close-btn{color:var(--muted);border-left:1px solid var(--border)}
+.modal-actions .ok-btn{color:var(--navy)}
+
+/* ===== INVOICE ===== */
+.invoice-add-row{display:flex;gap:8px;margin-bottom:14px}
+.invoice-add-row input{flex:1}
+.invoice-add-row .btn{white-space:nowrap}
+.invoice-total-bar{background:#fff;border-radius:12px;padding:14px 16px;text-align:center;font-size:16px;font-weight:700;margin:14px 0;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.invoice-total-bar span{color:var(--navy)}
+.invoice-actions{display:flex;gap:10px}
+.invoice-actions .btn{flex:1}
+
+/* ===== TABS ===== */
+.tabbar{display:flex;background:var(--navy);border-radius:12px 12px 0 0;overflow-x:auto}
+.tabbar button{flex:1;white-space:nowrap;background:none;border:none;color:rgba(255,255,255,.65);padding:14px 10px;font-size:13.5px;font-weight:600;border-bottom:3px solid transparent}
+.tabbar button.active{color:var(--gold);border-bottom-color:var(--gold)}
+.subtabbar{display:flex;background:var(--navy-light);overflow-x:auto}
+.subtabbar button{flex:1;white-space:nowrap;background:none;border:none;color:rgba(255,255,255,.7);padding:11px 8px;font-size:12.5px;font-weight:600;border-bottom:3px solid transparent}
+.subtabbar button.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-content{background:var(--bg);padding-top:14px}
+
+.period-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.period-card .p-label{color:var(--muted);font-size:13px;margin-bottom:4px}
+.period-card .p-value{font-size:22px;font-weight:700;color:var(--navy)}
+.period-card .p-value.rank{font-size:15px;font-weight:600;color:var(--navy-light);line-height:1.7}
+
+.stat-row{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:15px 16px;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.stat-row .s-label{font-size:13.5px;color:var(--muted)}
+.stat-row .s-value{font-size:17px;font-weight:700;color:var(--navy)}
+
+.report-row{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:16px;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04);font-weight:600}
+.report-row .arrow{color:var(--muted)}
+
+.date-filter-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;z-index:10}
+.date-filter-bar select{background:none;border:none;color:var(--gold);font-size:14px;font-weight:600}
+.date-filter-bar select option{color:#000}
+
+.page-title-row{margin-bottom:14px}
+.page-title-row h2{margin:0;font-size:19px}
+.page-title-row .desc{color:var(--muted);font-size:12.5px;margin-top:2px}
+
+.panel{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.panel h3{margin:0 0 12px;font-size:15.5px}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12.5px;font-weight:600}
+.badge-success{background:#E4F6EB;color:var(--success)}
+.hist-link{color:var(--navy-light);font-size:12.5px;text-decoration:underline}
+
+#printArea{display:none}
+@media print{
+  body > *:not(#printArea){display:none !important}
+  #printArea{display:block !important;direction:rtl;font-family:Tahoma,Arial,sans-serif}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v6c0 5 3.8 9.4 9 11 5.2-1.6 9-6 9-11V7l-9-5z" fill="#F2B134"/></svg>
+    </div>
+    <h1>شركة الدكروري للمواد الغذائية</h1>
+    <div class="sub">نظام إدارة الحسابات والمخزون</div>
+    <div class="login-error" id="loginError"></div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="كلمة المرور" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">دخول</button>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none">
+  <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreData(event)">
+
+  <div class="topbar">
+    <button class="icon-btn" onclick="toggleDrawer(true)">☰</button>
+    <div class="title-wrap">
+      <h2 id="topTitle">Cashier</h2>
+      <div class="desc" id="topDesc"></div>
+    </div>
+    <button class="icon-btn" id="backBtn" style="display:none" onclick="goBack()">←</button>
+  </div>
+
+  <div id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+  <div id="drawer">
+    <div class="drawer-head">
+      <div class="lg"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v6c0 5 3.8 9.4 9 11 5.2-1.6 9-6 9-11V7l-9-5z" fill="#F2B134"/></svg></div>
+      <h3>شركة الدكروري</h3>
+      <div class="sub">نظام إدارة الحسابات</div>
+    </div>
+    <div id="navList"></div>
+  </div>
+
+  <main id="content"></main>
+  <div id="printArea"></div>
+</div>
+
+<div id="scannerOverlay" style="display:none;position:fixed;inset:0;background:#000;z-index:100;flex-direction:column">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#111">
+    <span style="color:#fff;font-weight:700">وجّه الكاميرا نحو الباركود</span>
+    <button onclick="closeBarcodeScanner()" style="background:none;border:none;color:#fff;font-size:22px">✕</button>
+  </div>
+  <video id="scannerVideo" autoplay playsinline muted style="flex:1;width:100%;object-fit:cover"></video>
+  <div style="padding:14px;background:#111;color:#ccc;font-size:12px;text-align:center">لو الكاميرا مش شغالة أو مش شايف الباركود، اقفل واستخدم "او ادخل رقم الباركود يدوياً"</div>
+</div>
+
+<script>
+/* ================= STATE / STORAGE ================= */
+const state = { items:[], customers:[], suppliers:[], sales:[], purchases:[], expenses:[], stocktakes:[], priceHistory:[] };
+const KEYS = ['items','customers','suppliers','sales','purchases','expenses','stocktakes','priceHistory'];
+
+async function loadAll(){
+  for(const k of KEYS){
+    try{
+      const v = localStorage.getItem('dekroure_accounting_' + k);
+      state[k] = v ? JSON.parse(v) : [];
+    }catch(e){ state[k] = []; }
+  }
+}
+function saveKey(k){
+  try{ localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(state[k])); }
+  catch(e){ console.error('save failed', k, e); }
+}
+function saveAll(){ KEYS.forEach(saveKey); }
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(n){ n = Number(n)||0; return n.toLocaleString('ar-EG',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+/* ================= LOGIN ================= */
+function doLogin(){
+  const pass = document.getElementById('loginPass').value.trim();
+  const err = document.getElementById('loginError');
+  if(pass === '2030Ee'){
+    err.textContent = '';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    render('dashboard');
+  }else{
+    err.textContent = 'كلمة المرور غير صحيحة';
+  }
+}
+function logout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('loginPass').value='';
+}
+
+/* ================= NAV / DRAWER ================= */
+const NAV_ITEMS = [
+  {id:'dashboard', ic:'🏠', label:'الرئيسية'},
+  {id:'warehouse', ic:'📦', label:'مخزن المنتجات'},
+  {id:'sale', ic:'🛒', label:'بيع'},
+  {id:'purchase', ic:'🧾', label:'شراء'},
+  {id:'customers', ic:'👥', label:'العملاء'},
+  {id:'suppliers', ic:'🚚', label:'الموردين'},
+  {id:'accounts', ic:'📊', label:'إدارة الحسابات'},
+  {id:'expenses', ic:'💵', label:'المصروفات'},
+  {id:'stocktakes', ic:'📋', label:'الجرد'},
+  {id:'expiryAlerts', ic:'⏰', label:'تنبيهات الصلاحية'},
+  {id:'settings', ic:'⚙️', label:'الإعدادات والنسخ الاحتياطي'},
+];
+function toggleDrawer(open){
+  document.getElementById('drawer').classList.toggle('open', open);
+  document.getElementById('drawerOverlay').classList.toggle('open', open);
+}
+function renderNav(activeView){
+  const html = NAV_ITEMS.map(n=>`
+    <div class="nav-item ${n.id===activeView?'active':''}" onclick="toggleDrawer(false);render('${n.id}')">
+      <span class="ic">${n.ic}</span><span>${n.label}</span>
+    </div>
+  `).join('') + `<div class="nav-item logout-item" onclick="toggleDrawer(false);logout()"><span class="ic">🚪</span><span>تسجيل خروج</span></div>`;
+  document.getElementById('navList').innerHTML = html;
+}
+
+/* ================= ROUTER ================= */
+let currentView = 'dashboard';
+let currentParams = null;
+let navHistory = [];
+let accountsTab = 'overview';
+let overviewSub = 'sales';
+let aggSub = 'sales';
+let dateFilter = 'today';
+let saleDraft = { lines:[], discount:0, paid:null, customerId:'' };
+let purchaseDraft = { lines:[], paid:null, supplierId:'' };
+let sortState = { key:'name', dir:1 };
+
+function render(view, params, fromBack){
+  if(!fromBack && currentView && (view!==currentView || JSON.stringify(params||null)!==JSON.stringify(currentParams))){
+    navHistory.push({view: currentView, params: currentParams});
+  }
+  currentView = view;
+  currentParams = params || null;
+  const titles = {
+    dashboard:['Cashier',''],
+    warehouse:['مخزن المنتجات',''],
+    warehouseForm:['منتج جديد',''],
+    sale:['فاتورة بيع جديدة',''],
+    salesInvoices:['فواتير البيع',''],
+    saleInvoiceView:['تفاصيل فاتورة البيع',''],
+    purchase:['فاتورة شراء جديدة',''],
+    purchaseInvoices:['فواتير الشراء',''],
+    purchaseInvoiceView:['تفاصيل فاتورة الشراء',''],
+    customers:['العملاء',''],
+    customerForm:['عميل جديد',''],
+    suppliers:['الموردين',''],
+    supplierForm:['مورد جديد',''],
+    accounts:['ادارة الحسابات',''],
+    expenses:['المصروفات',''],
+    expenseForm:['مصروف جديد',''],
+    stocktakes:['الجرد',''],
+    stocktakeForm:['جرد جديد',''],
+    stocktakeView:['تفاصيل الجرد',''],
+    expiryAlerts:['تنبيهات الصلاحية',''],
+    settings:['الإعدادات والنسخ الاحتياطي',''],
+  };
+  document.getElementById('topTitle').textContent = (titles[view]||['',''])[0];
+  document.getElementById('topDesc').textContent = (titles[view]||['',''])[1];
+  renderNav(view);
+  const c = document.getElementById('content');
+  if(view==='dashboard') c.innerHTML = renderDashboard();
+  else if(view==='warehouse') c.innerHTML = renderWarehouse();
+  else if(view==='warehouseForm') c.innerHTML = renderWarehouseForm(params);
+  else if(view==='sale') c.innerHTML = renderSale();
+  else if(view==='salesInvoices') c.innerHTML = renderSalesInvoices();
+  else if(view==='saleInvoiceView') c.innerHTML = renderSaleInvoiceView(params);
+  else if(view==='purchase') c.innerHTML = renderPurchase();
+  else if(view==='purchaseInvoices') c.innerHTML = renderPurchaseInvoices();
+  else if(view==='purchaseInvoiceView') c.innerHTML = renderPurchaseInvoiceView(params);
+  else if(view==='customers') c.innerHTML = renderPeopleList('customers','customer');
+  else if(view==='customerForm') c.innerHTML = renderPersonForm('customers', params);
+  else if(view==='suppliers') c.innerHTML = renderPeopleList('suppliers','supplier');
+  else if(view==='supplierForm') c.innerHTML = renderPersonForm('suppliers', params);
+  else if(view==='accounts') c.innerHTML = renderAccounts();
+  else if(view==='expenses') c.innerHTML = renderExpenses();
+  else if(view==='expenseForm') c.innerHTML = renderExpenseForm(params);
+  else if(view==='stocktakes') c.innerHTML = renderStocktakes();
+  else if(view==='stocktakeForm') c.innerHTML = renderStocktakeForm();
+  else if(view==='stocktakeView') c.innerHTML = renderStocktakeView(params);
+  else if(view==='expiryAlerts') c.innerHTML = renderExpiryAlertsPage();
+  else if(view==='settings') c.innerHTML = renderSettings();
+  document.getElementById('backBtn').style.display = (view==='dashboard') ? 'none' : 'flex';
+  window.scrollTo(0,0);
+}
+function goBack(){
+  if(navHistory.length){
+    const prev = navHistory.pop();
+    render(prev.view, prev.params, true);
+  }else{
+    render('dashboard', null, true);
+  }
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  return `
+  <div class="dash-tile full" style="background:linear-gradient(135deg,#3C6280,#2C4A5E)" onclick="render('warehouse')">
+    <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.85">📦</div>
+    <div class="overlay"></div>
+    <div class="label">مخزن المنتجات</div>
+  </div>
+  <div class="dash-grid" style="margin-bottom:12px">
+    <div class="dash-tile" style="background:linear-gradient(135deg,#2E9E5B,#1E6B3D)" onclick="startNewSale()">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">🛒</div>
+      <div class="overlay"></div><div class="label">بيع</div>
+    </div>
+    <div class="dash-tile" style="background:linear-gradient(135deg,#3C6280,#2C4A5E)" onclick="startNewPurchase()">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">🧾</div>
+      <div class="overlay"></div><div class="label">شراء</div>
+    </div>
+  </div>
+  <div class="dash-grid" style="margin-bottom:12px">
+    <div class="dash-tile" style="background:linear-gradient(135deg,#5B7C93,#2C4A5E)" onclick="render('customers')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">👥</div>
+      <div class="overlay"></div><div class="label">العملاء</div>
+    </div>
+    <div class="dash-tile" style="background:linear-gradient(135deg,#7A5B3C,#4E3A26)" onclick="render('suppliers')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">🚚</div>
+      <div class="overlay"></div><div class="label">الموردين</div>
+    </div>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-tile" style="background:linear-gradient(135deg,#8A6D1E,#5C4813)" onclick="accountsTab='overview';render('accounts')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">📊</div>
+      <div class="overlay"></div><div class="label">ادارة الحسابات</div>
+    </div>
+    <div class="dash-tile" style="background:linear-gradient(135deg,#B04A4A,#7A2E2E)" onclick="render('expenses')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">💵</div>
+      <div class="overlay"></div><div class="label">المصروفات</div>
+    </div>
+  </div>
+  <div class="dash-grid" style="margin-top:12px">
+    <div class="dash-tile" style="background:linear-gradient(135deg,#4A7A6E,#2E5148)" onclick="render('stocktakes')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">📋</div>
+      <div class="overlay"></div><div class="label">الجرد</div>
+    </div>
+    <div class="dash-tile" style="background:linear-gradient(135deg,#B0794A,#7A502E)" onclick="render('expiryAlerts')">
+      <div class="ic" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;opacity:.85">⏰</div>
+      <div class="overlay"></div><div class="label">تنبيهات الصلاحية</div>
+    </div>
+  </div>
+  ${renderExpiryBanner()}
+  `;
+}
+function getExpiryStatus(expiry){
+  if(!expiry) return null;
+  const days = Math.ceil((new Date(expiry) - new Date(new Date().toDateString())) / 86400000);
+  if(days < 0) return {level:'expired', days, label:'منتهي الصلاحية'};
+  if(days <= 30) return {level:'soon', days, label:`باقي ${days} يوم`};
+  return {level:'ok', days, label:''};
+}
+function renderExpiryBanner(){
+  const alerts = state.items.map(it=>({it, st:getExpiryStatus(it.expiry)})).filter(x=>x.st && x.st.level!=='ok');
+  if(!alerts.length) return '';
+  const expiredCount = alerts.filter(x=>x.st.level==='expired').length;
+  const soonCount = alerts.filter(x=>x.st.level==='soon').length;
+  return `
+  <div class="panel" style="border:1px solid #F2C4A0;background:#FFF6EE;margin-top:14px" onclick="render('expiryAlerts')">
+    <h3 style="color:#B0532E">⏰ تنبيهات الصلاحية</h3>
+    <div style="font-size:14px;color:#7A502E">
+      ${expiredCount?`<div>🔴 ${expiredCount} منتج منتهي الصلاحية</div>`:''}
+      ${soonCount?`<div>🟠 ${soonCount} منتج قرب انتهاء صلاحيته</div>`:''}
+    </div>
+  </div>
+  `;
+}
+
+/* ================= WAREHOUSE (مخزن المنتجات) ================= */
+let warehouseSearch = '';
+function renderWarehouse(){
+  let items = state.items.filter(it => !warehouseSearch || it.name.includes(warehouseSearch));
+  items = items.slice().sort((a,b)=>{
+    let av = sortState.key==='name'?a.name:(sortState.key==='qty'?a.qty:a.sellPrice);
+    let bv = sortState.key==='name'?b.name:(sortState.key==='qty'?b.qty:b.sellPrice);
+    if(typeof av==='string') return av.localeCompare(bv,'ar') * sortState.dir;
+    return (av-bv) * sortState.dir;
+  });
+  const totalQty = state.items.reduce((a,it)=>a+(it.qty||0),0);
+  const totalCostValue = state.items.reduce((a,it)=>a+(it.qty||0)*(it.buyPrice||0),0);
+  const totalSellValue = state.items.reduce((a,it)=>a+(it.qty||0)*(it.sellPrice||0),0);
+  const rows = items.map(it => `
+    <tr onclick="render('warehouseForm',{id:'${it.id}'})">
+      <td>${esc(it.name)}${(()=>{const st=getExpiryStatus(it.expiry);return st&&st.level!=='ok'?`<div style="font-size:11px;color:${st.level==='expired'?'#D64545':'#B0532E'}">${st.level==='expired'?'🔴':'🟠'} ${st.label}</div>`:'';})()}</td>
+      <td>${it.qty}${it.unit?' '+esc(it.unit):''}<div style="font-size:11px;color:var(--muted)">${piecesLabel(it)}</div></td>
+      <td>${fmt(it.sellPrice)}</td>
+    </tr>
+  `).join('') || `<tr><td colspan="3" class="empty-state">لا توجد منتجات بعد</td></tr>`;
+  return `
+  <div class="panel" style="margin-bottom:14px">
+    <h3>📦 ملخص المخزون</h3>
+    <div class="stat-row"><span class="s-value">${totalQty}</span><span class="s-label">إجمالي الكمية الموجودة (قطعة)</span></div>
+    <div class="stat-row"><span class="s-value">${fmt(totalCostValue)}</span><span class="s-label">قيمة المخزون بسعر الشراء (البضاعة عندك بكام)</span></div>
+    <div class="stat-row"><span class="s-value">${fmt(totalSellValue)}</span><span class="s-label">قيمة المخزون بسعر البيع (لو بعت كل حاجة هتجيب كام)</span></div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+    <button class="btn btn-outline" onclick="printWarehouse()">🖨️ طباعة تقرير المخزن</button>
+  </div>
+  <div class="search-label">ابحث عن منتج</div>
+  <input class="search-box" placeholder="ادخل اسم المنتج" value="${esc(warehouseSearch)}" oninput="warehouseSearch=this.value;render('warehouse')">
+  <table class="list-table">
+    <thead><tr>
+      <th class="sortable" onclick="sortWarehouse('name')">المنتج ↕</th>
+      <th class="sortable" onclick="sortWarehouse('qty')">الكمية ↕</th>
+      <th class="sortable" onclick="sortWarehouse('sellPrice')">السعر ↕</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <button class="fab" onclick="render('warehouseForm')">+</button>
+  `;
+}
+function sortWarehouse(key){
+  if(sortState.key===key) sortState.dir *= -1; else { sortState.key=key; sortState.dir=1; }
+  render('warehouse');
+}
+function renderWarehouseForm(params){
+  const editId = params && params.id;
+  const it = editId ? state.items.find(x=>x.id===editId) : null;
+  return `
+  <div class="panel">
+    <div class="field"><label>اسم المنتج</label><input id="f_name" value="${it?esc(it.name):''}" placeholder="ادخل اسم منتج جديد"></div>
+    <div class="field">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <label style="margin:0">الباركود</label>
+        <a href="javascript:void(0)" onclick="promptManualBarcode('f_barcode')" style="font-size:12px">او ادخل رقم الباركود</a>
+      </div>
+      <input type="hidden" id="f_barcode" value="${it?esc(it.barcode||''):''}">
+      <button type="button" class="btn btn-outline btn-block" style="margin-top:6px" id="f_barcode_btn" onclick="openBarcodeScanner('f_barcode')">📷 ${it&&it.barcode?esc(it.barcode):'اضف باركود للمنتج'}</button>
+    </div>
+    <div class="field"><label>الكمية</label><input id="f_qty" type="number" value="${it?it.qty:''}" placeholder="الكمية"></div>
+    <div style="display:flex;gap:10px">
+      <div class="field" style="flex:1"><label>وحدة الكمية (اختياري)</label><input id="f_unit" value="${it?esc(it.unit||''):''}" placeholder="مثال: كرتونة، لفة"></div>
+      <div class="field" style="flex:1"><label>عدد القطع في الوحدة</label><input id="f_piecesPerUnit" type="number" value="${it&&it.piecesPerUnit?it.piecesPerUnit:''}" placeholder="مثال: 12"></div>
+    </div>
+    <div class="field"><label>اسم القطعة الفرعية (اختياري)</label><input id="f_pieceUnit" value="${it?esc(it.pieceUnit||''):''}" placeholder="مثال: زجاجة، كيلو"></div>
+    <div style="display:flex;gap:10px">
+      <div class="field" style="flex:1"><label>سعر الشراء</label><input id="f_buy" type="number" value="${it?it.buyPrice:''}" placeholder="سعر الشراء"></div>
+      <div class="field" style="flex:1"><label>سعر البيع</label><input id="f_sell" type="number" value="${it?it.sellPrice:''}" placeholder="سعر البيع"></div>
+    </div>
+    <div class="field"><label>الوصف</label><textarea id="f_desc" rows="2" placeholder="الوصف">${it?esc(it.desc||''):''}</textarea></div>
+    <div class="field"><label>التصنيف</label><input id="f_cat" value="${it?esc(it.category||''):''}" placeholder="التصنيف"></div>
+    <div class="field"><label>تاريخ انتهاء الصلاحية (اختياري)</label><input id="f_expiry" type="date" value="${it&&it.expiry?it.expiry:''}"></div>
+    <button class="btn btn-primary btn-block" onclick="saveItem(${editId?`'${editId}'`:'null'})">حفظ</button>
+    ${it?`<button class="btn btn-danger btn-block" style="margin-top:10px" onclick="deleteItem('${editId}')">حذف المنتج</button>`:''}
+  </div>
+  ${manualBarcodeModal ? renderManualBarcodeModal() : ''}
+  `;
+}
+function saveItem(id){
+  const name = document.getElementById('f_name').value.trim();
+  if(!name){ alert('من فضلك ادخل اسم المنتج'); return; }
+  const data = {
+    name,
+    barcode: document.getElementById('f_barcode').value.trim(),
+    qty: Number(document.getElementById('f_qty').value)||0,
+    unit: document.getElementById('f_unit').value.trim(),
+    pieceUnit: document.getElementById('f_pieceUnit').value.trim(),
+    piecesPerUnit: Number(document.getElementById('f_piecesPerUnit').value)||0,
+    buyPrice: Number(document.getElementById('f_buy').value)||0,
+    sellPrice: Number(document.getElementById('f_sell').value)||0,
+    desc: document.getElementById('f_desc').value.trim(),
+    category: document.getElementById('f_cat').value.trim(),
+    expiry: document.getElementById('f_expiry').value || '',
+  };
+  if(id){
+    const it = state.items.find(x=>x.id===id);
+    Object.assign(it, data);
+  }else{
+    state.items.push({ id: uid(), ...data });
+  }
+  saveKey('items');
+  render('warehouse');
+}
+function deleteItem(id){
+  if(!confirm('هل تريد حذف هذا المنتج؟')) return;
+  state.items = state.items.filter(x=>x.id!==id);
+  saveKey('items');
+  render('warehouse');
+}
+/* ================= BARCODE: MANUAL ENTRY MODAL ================= */
+let manualBarcodeModal = null;
+function promptManualBarcode(inputId){
+  const el = document.getElementById(inputId);
+  manualBarcodeModal = { target: inputId, value: el ? el.value : '' };
+  render(currentView, currentParams, true);
+}
+function renderManualBarcodeModal(){
+  const m = manualBarcodeModal;
+  return `
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div style="padding:16px">
+        <input style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;text-align:center;font-size:16px" placeholder="ادخل رقم الباركود" value="${esc(m.value)}" oninput="manualBarcodeModal.value=this.value">
+      </div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="manualBarcodeModal=null;render(currentView,currentParams,true)">غلق</button>
+        <button class="ok-btn" onclick="confirmManualBarcode()">تم</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+function confirmManualBarcode(){
+  applyScannedBarcode(manualBarcodeModal.target, manualBarcodeModal.value.trim());
+  manualBarcodeModal = null;
+  render(currentView, currentParams, true);
+}
+function applyScannedBarcode(inputId, value){
+  const el = document.getElementById(inputId);
+  if(el) el.value = value;
+  const btn = document.getElementById(inputId + '_btn');
+  if(btn) btn.textContent = value ? ('📷 ' + value) : '📷 اضف باركود للمنتج';
+}
+
+/* ================= BARCODE: CAMERA SCANNER ================= */
+let scannerStream = null;
+let scannerInputId = null;
+let scannerRAF = null;
+async function openBarcodeScanner(inputId){
+  scannerInputId = inputId;
+  if(!('BarcodeDetector' in window)){
+    alert('الكاميرا لقراءة الباركود مش مدعومة على المتصفح ده. استخدم "او ادخل رقم الباركود" بدل كده.');
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert('تعذر الوصول للكاميرا على هذا الجهاز. استخدم "او ادخل رقم الباركود" بدل كده.');
+    return;
+  }
+  const overlay = document.getElementById('scannerOverlay');
+  const video = document.getElementById('scannerVideo');
+  try{
+    scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+  }catch(e){
+    alert('تعذر فتح الكاميرا. تأكد إنك سمحت للموقع باستخدام الكاميرا من إعدادات المتصفح.');
+    return;
+  }
+  video.srcObject = scannerStream;
+  overlay.style.display = 'flex';
+  let detector;
+  try{
+    detector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf'] });
+  }catch(e){
+    detector = new BarcodeDetector();
+  }
+  const scanLoop = async () => {
+    if(!scannerStream) return;
+    try{
+      const codes = await detector.detect(video);
+      if(codes && codes.length){
+        const value = codes[0].rawValue;
+        closeBarcodeScanner();
+        applyScannedBarcode(scannerInputId, value);
+        return;
+      }
+    }catch(e){}
+    scannerRAF = requestAnimationFrame(scanLoop);
+  };
+  scannerRAF = requestAnimationFrame(scanLoop);
+}
+function closeBarcodeScanner(){
+  if(scannerRAF) cancelAnimationFrame(scannerRAF);
+  scannerRAF = null;
+  if(scannerStream){ scannerStream.getTracks().forEach(t=>t.stop()); scannerStream = null; }
+  const overlay = document.getElementById('scannerOverlay');
+  if(overlay) overlay.style.display = 'none';
+}
+
+function piecesLabel(it){
+  if(!it.piecesPerUnit || !it.pieceUnit) return '';
+  const totalPieces = (it.qty||0) * it.piecesPerUnit;
+  return ` (${totalPieces} ${it.pieceUnit})`;
+}
+function findItemByNameOrBarcode(q){
+  q = q.trim();
+  if(!q) return null;
+  return state.items.find(it => it.barcode && it.barcode===q) ||
+         state.items.find(it => it.name === q) ||
+         state.items.find(it => it.name.includes(q));
+}
+
+/* ================= SALE (بيع) ================= */
+function startNewSale(){ saleDraft = { lines:[], discount:0, paid:null, customerId:'' }; saleCheckout=null; editingSaleId=null; editingSaleOriginal=null; render('sale'); }
+let saleCheckout = null;
+let saleMenuOpen = false;
+function renderSale(){
+  const total = saleDraft.lines.reduce((s,l)=>s + l.qty*l.price, 0);
+  const totalPieces = saleDraft.lines.reduce((s,l)=>s + l.qty, 0);
+  const rows = saleDraft.lines.map((l,i)=>`
+    <tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.price)}
+      <span style="color:var(--danger);margin-right:8px;cursor:pointer" onclick="removeSaleLine(${i})">✕</span>
+    </td></tr>
+  `).join('') || `<tr><td colspan="3" class="empty-state">لسه معملتش أي إضافة</td></tr>`;
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;position:relative">
+    <a href="javascript:void(0)" onclick="promptBarcodeSale()">استخدم الباركود</a>
+    <span style="cursor:pointer;font-size:20px;color:var(--navy)" onclick="saleMenuOpen=!saleMenuOpen;render('sale')">⋮</span>
+    ${saleMenuOpen ? `<div style="position:absolute;left:0;top:24px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15);border-radius:10px;z-index:5;overflow:hidden">
+      <div style="padding:12px 16px;white-space:nowrap;cursor:pointer" onclick="saleMenuOpen=false;render('salesInvoices')">عرض فواتير البيع</div>
+    </div>` : ''}
+  </div>
+  <div class="invoice-add-row">
+    <input id="saleInput" placeholder="ادخل اسم منتج او صنف بالفاتورة">
+    <button class="btn btn-primary" onclick="addSaleLine()">اضف</button>
+  </div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>الكمية (${totalPieces})</th><th>السعر</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="invoice-total-bar">الاجمالى : <span>${fmt(total)}</span></div>
+  <div class="invoice-actions">
+    <button class="btn btn-outline" onclick="startNewSale()">مسح</button>
+    <button class="btn btn-accent" onclick="printSaleDraft()">🖨️ طباعة</button>
+    <button class="btn btn-primary" onclick="openSaleCheckout()">حفظ</button>
+  </div>
+  ${saleCheckout ? renderSaleCheckoutModal() : ''}
+  `;
+}
+function addSaleLine(){
+  const inp = document.getElementById('saleInput');
+  const q = inp.value.trim();
+  if(!q) return;
+  const it = findItemByNameOrBarcode(q);
+  if(!it){ alert('المنتج غير موجود في المخزن، أضفه الأول من صفحة مخزن المنتجات.'); return; }
+  const existing = saleDraft.lines.find(l=>l.itemId===it.id);
+  if(existing) existing.qty += 1;
+  else saleDraft.lines.push({ itemId: it.id, name: it.name, qty:1, price: it.sellPrice, cost: it.buyPrice });
+  inp.value='';
+  render('sale');
+}
+function promptBarcodeSale(){
+  const code = prompt('ادخل رقم الباركود');
+  if(!code) return;
+  const it = findItemByNameOrBarcode(code);
+  if(!it){ alert('لا يوجد منتج بهذا الباركود'); return; }
+  const existing = saleDraft.lines.find(l=>l.itemId===it.id);
+  if(existing) existing.qty += 1;
+  else saleDraft.lines.push({ itemId: it.id, name: it.name, qty:1, price: it.sellPrice, cost: it.buyPrice });
+  render('sale');
+}
+function removeSaleLine(i){ saleDraft.lines.splice(i,1); render('sale'); }
+
+let editingSaleId = null;
+let editingSaleOriginal = null;
+let saleInvoiceMenuOpen = null;
+function openSaleCheckout(){
+  if(!saleDraft.lines.length){ alert('أضف منتج واحد على الأقل'); return; }
+  const total = saleDraft.lines.reduce((s,l)=>s + l.qty*l.price, 0);
+  if(editingSaleOriginal){
+    const o = editingSaleOriginal;
+    const fullyPaid = o.paid >= (o.total);
+    saleCheckout = { discount:o.discount, total, paidManual:o.paid, fullyPaid, date:o.date, customerName:o.customerName };
+  }else{
+    saleCheckout = { discount:0, total, paidManual:total, fullyPaid:true, date: todayISO(), customerName:'' };
+  }
+  render('sale');
+}
+function renderSaleCheckoutModal(){
+  const c = saleCheckout;
+  const netTotal = Math.max(0, c.total - (Number(c.discount)||0));
+  const paid = c.fullyPaid ? netTotal : (Number(c.paidManual)||0);
+  const remaining = Math.max(0, netTotal - paid);
+  return `
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:${c.fullyPaid?'var(--danger)':'var(--muted)'};font-size:13px;cursor:pointer" onclick="saleCheckout.fullyPaid=!saleCheckout.fullyPaid;render('sale')">${c.fullyPaid?'✓ ':''}فاتورة مسددة</span>
+        <span>فاتورة البيع${editingSaleId?' (تعديل)':''}</span>
+      </div>
+      <div class="modal-row"><label>خصم على الفاتورة</label><input type="number" value="${c.discount||0}" oninput="saleCheckout.discount=Number(this.value)||0"></div>
+      <div class="modal-row"><label>اجمالى الفاتورة</label><input value="${fmt(netTotal)}" disabled></div>
+      <div class="modal-row"><label>المبلغ المدفوع</label><input type="number" ${c.fullyPaid?'disabled':''} value="${c.fullyPaid?netTotal:(c.paidManual!=null?c.paidManual:netTotal)}" oninput="saleCheckout.paidManual=Number(this.value)||0"></div>
+      <div class="modal-row"><label>المبلغ المتبقى</label><input value="${fmt(remaining)}" disabled></div>
+      <div class="modal-row"><label>تاريخ الفاتورة</label><input type="date" value="${c.date}" oninput="saleCheckout.date=this.value"></div>
+      <div class="modal-row"><label>اسم العميل</label><input value="${esc(c.customerName)}" placeholder="ادخل اسم العميل" oninput="saleCheckout.customerName=this.value"></div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="saleCheckout=null;render('sale')">غلق</button>
+        <button class="ok-btn" onclick="confirmSaleCheckout()">حفظ</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+function ensurePersonByName(key, name){
+  name = (name||'').trim();
+  if(!name) return '';
+  let p = state[key].find(x=>x.name===name);
+  if(!p){ p = { id: uid(), name, address:'', phone:'', notes:'' }; state[key].push(p); saveKey(key); }
+  return p.id;
+}
+function nextInvoiceNo(arr){ return arr.length ? Math.max(...arr.map(x=>x.invoiceNo||0)) + 1 : 1; }
+function confirmSaleCheckout(){
+  const c = saleCheckout;
+  const netTotal = Math.max(0, c.total - (Number(c.discount)||0));
+  const paid = c.fullyPaid ? netTotal : (Number(c.paidManual)||0);
+  if(editingSaleId && editingSaleOriginal){
+    editingSaleOriginal.lines.forEach(l=>{
+      const it = state.items.find(x=>x.id===l.itemId);
+      if(it) it.qty += l.qty;
+    });
+  }
+  for(const l of saleDraft.lines){
+    const it = state.items.find(x=>x.id===l.itemId);
+    if(it) it.qty = Math.max(0, it.qty - l.qty);
+  }
+  const customerId = ensurePersonByName('customers', c.customerName);
+  const wasEditing = !!editingSaleId;
+  if(wasEditing){
+    const s = state.sales.find(x=>x.id===editingSaleId);
+    Object.assign(s, {
+      date: new Date(c.date).toISOString(),
+      lines: saleDraft.lines, discount: Number(c.discount)||0,
+      total: netTotal, paid, customerId, customerName: (c.customerName||'').trim()
+    });
+  }else{
+    state.sales.push({
+      id: uid(), invoiceNo: nextInvoiceNo(state.sales),
+      date: new Date(c.date).toISOString(),
+      lines: saleDraft.lines, discount: Number(c.discount)||0,
+      total: netTotal, paid,
+      customerId, customerName: (c.customerName||'').trim()
+    });
+  }
+  saveKey('items'); saveKey('sales');
+  saleCheckout = null;
+  editingSaleId = null; editingSaleOriginal = null;
+  alert(wasEditing ? 'تم تعديل فاتورة البيع بنجاح' : 'تم حفظ فاتورة البيع بنجاح');
+  startNewSale();
+  render(wasEditing ? 'salesInvoices' : 'dashboard');
+}
+function editSaleInvoice(id){
+  const s = state.sales.find(x=>x.id===id);
+  if(!s) return;
+  editingSaleId = id;
+  editingSaleOriginal = {
+    lines: s.lines.map(l=>({...l})),
+    discount: s.discount||0,
+    date: new Date(s.date).toISOString().slice(0,10),
+    customerName: s.customerName||'',
+    paid: s.paid, total: s.total
+  };
+  saleDraft = { lines: s.lines.map(l=>({...l})), discount: s.discount||0, paid:null, customerId:'' };
+  saleCheckout = null;
+  saleInvoiceMenuOpen = null;
+  render('sale');
+}
+function deleteSaleInvoice(id){
+  if(!confirm('هل تريد حذف هذه الفاتورة؟ سيتم إرجاع الكميات المباعة للمخزون.')) return;
+  const s = state.sales.find(x=>x.id===id);
+  if(s){
+    s.lines.forEach(l=>{
+      const it = state.items.find(x=>x.id===l.itemId);
+      if(it) it.qty += l.qty;
+    });
+  }
+  state.sales = state.sales.filter(x=>x.id!==id);
+  saveKey('items'); saveKey('sales');
+  saleInvoiceMenuOpen = null;
+  render('salesInvoices');
+}
+function renderSalesInvoices(){
+  const list = state.sales.slice().sort((a,b)=> new Date(b.date)-new Date(a.date))
+    .filter(s => !invoiceSearch || (s.customerName||'').includes(invoiceSearch) || String(s.invoiceNo).includes(invoiceSearch));
+  const rows = list.map(s=>`
+    <div style="position:relative;margin-bottom:8px">
+      <div class="report-row" style="margin-bottom:0" onclick="saleInvoiceMenuOpen=(saleInvoiceMenuOpen==='${s.id}'?null:'${s.id}');render('salesInvoices')">
+        <div style="text-align:right"><div>${esc(s.customerName)||'بدون عميل'}</div><div style="font-size:12px;color:var(--muted)">فاتورة رقم: ${s.invoiceNo||''} - ${s.lines.reduce((a,l)=>a+l.qty,0)} قطعة</div><div style="font-size:11px;color:var(--muted)">${new Date(s.date).toLocaleDateString('ar-EG')}</div></div>
+        <span style="color:var(--danger);font-weight:700">${fmt(s.total)}</span>
+      </div>
+      ${saleInvoiceMenuOpen===s.id ? `
+      <div style="background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15);border-radius:10px;overflow:hidden;margin-top:4px">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--navy)" onclick="saleInvoiceMenuOpen=null;render('saleInvoiceView',{id:'${s.id}'})">عرض الفاتورة</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--navy)" onclick="editSaleInvoice('${s.id}')">تعديل الفاتورة</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--danger)" onclick="deleteSaleInvoice('${s.id}')">حذف الفاتورة</div>
+        <div style="padding:14px 16px;cursor:pointer;color:var(--navy)" onclick="saleInvoiceMenuOpen=null;printSavedSale('${s.id}')">طباعة الفاتورة</div>
+      </div>` : ''}
+    </div>
+  `).join('') || `<div class="empty-state">لا توجد فواتير بيع بعد</div>`;
+  return `
+  <input class="search-box" placeholder="بحث" value="${esc(invoiceSearch)}" oninput="invoiceSearch=this.value;render('salesInvoices')">
+  ${rows}
+  `;
+}
+function renderSaleInvoiceView(params){
+  const s = state.sales.find(x=>x.id===(params&&params.id));
+  if(!s) return `<div class="empty-state">هذه الفاتورة غير موجودة</div>`;
+  const rows = s.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.price)}</td><td>${fmt(l.qty*l.price)}</td></tr>`).join('');
+  return `
+  <div class="page-title-row"><h2>فاتورة بيع رقم ${s.invoiceNo||''}</h2><div class="desc">${esc(s.customerName)||'بدون عميل'} - ${new Date(s.date).toLocaleDateString('ar-EG')}</div></div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>الكمية (${s.lines.reduce((a,l)=>a+l.qty,0)})</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="stat-row"><span class="s-value">${fmt(s.discount||0)}</span><span class="s-label">الخصم</span></div>
+  <div class="stat-row"><span class="s-value">${fmt(s.total)}</span><span class="s-label">الإجمالي</span></div>
+  <div class="stat-row"><span class="s-value">${fmt(s.paid)}</span><span class="s-label">المدفوع</span></div>
+  <div class="stat-row"><span class="s-value">${fmt(Math.max(0,s.total-s.paid))}</span><span class="s-label">المتبقي</span></div>
+  <div class="invoice-actions" style="margin-top:10px">
+    <button class="btn btn-outline" onclick="editSaleInvoice('${s.id}')">✏️ تعديل</button>
+    <button class="btn btn-accent" onclick="printSavedSale('${s.id}')">🖨️ طباعة</button>
+  </div>
+  `;
+}
+function printSavedSale(id){
+  const s = state.sales.find(x=>x.id===id);
+  if(!s) return;
+  const rows = s.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.price)}</td><td>${fmt(l.qty*l.price)}</td></tr>`).join('');
+  printHTML(`فاتورة بيع رقم ${s.invoiceNo||''} - ${esc(s.customerName)||'بدون عميل'}`, `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>الكمية (${s.lines.reduce((a,l)=>a+l.qty,0)})</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="margin-top:10px;font-size:13px">
+      <div>الخصم: ${fmt(s.discount||0)}</div>
+      <div>الإجمالي: ${fmt(s.total)}</div>
+      <div>المدفوع: ${fmt(s.paid)}</div>
+      <div>المتبقي: ${fmt(Math.max(0,s.total-s.paid))}</div>
+    </div>
+  `);
+}
+
+/* ================= PURCHASE (شراء) ================= */
+let purchaseModal = null;
+let invoiceSearch = '';
+function startNewPurchase(){ purchaseDraft = { lines:[], paid:null, supplierId:'' }; purchaseCheckout=null; editingPurchaseId=null; editingPurchaseOriginal=null; render('purchase'); }
+function renderPurchase(){
+  const total = purchaseDraft.lines.reduce((s,l)=>s + l.qty*l.buyPrice, 0);
+  const totalPieces = purchaseDraft.lines.reduce((s,l)=>s + l.qty, 0);
+  const rows = purchaseDraft.lines.map((l,i)=>`
+    <tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.buyPrice)}
+      <span style="color:var(--danger);margin-right:8px;cursor:pointer" onclick="removePurchaseLine(${i})">✕</span>
+    </td></tr>
+  `).join('') || `<tr><td colspan="3" class="empty-state">لسه معملتش أي إضافة</td></tr>`;
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;position:relative">
+    <a href="javascript:void(0)" onclick="promptBarcodePurchase()">استخدم الباركود</a>
+    <span style="cursor:pointer;font-size:20px;color:var(--navy)" onclick="purchaseMenuOpen=!purchaseMenuOpen;render('purchase')">⋮</span>
+    ${purchaseMenuOpen ? `<div style="position:absolute;left:0;top:24px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15);border-radius:10px;z-index:5;overflow:hidden">
+      <div style="padding:12px 16px;white-space:nowrap;cursor:pointer" onclick="purchaseMenuOpen=false;render('purchaseInvoices')">عرض فواتير الشراء</div>
+    </div>` : ''}
+  </div>
+  <div class="invoice-add-row">
+    <input id="purchaseInput" placeholder="ادخل اسم منتج جديد أو موجود">
+    <button class="btn btn-primary" onclick="openPurchaseModal()">اضف</button>
+  </div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>الكمية (${totalPieces})</th><th>سعر الشراء</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="invoice-total-bar">الاجمالى : <span>${fmt(total)}</span></div>
+  <div class="invoice-actions">
+    <button class="btn btn-outline" onclick="startNewPurchase()">مسح</button>
+    <button class="btn btn-accent" onclick="printPurchaseDraft()">🖨️ طباعة</button>
+    <button class="btn btn-primary" onclick="openPurchaseCheckout()">حفظ</button>
+  </div>
+  ${purchaseModal ? renderPurchaseModal() : ''}
+  ${purchaseCheckout ? renderPurchaseCheckoutModal() : ''}
+  `;
+}
+let purchaseMenuOpen = false;
+let purchaseCheckout = null;
+function openPurchaseModal(){
+  const inp = document.getElementById('purchaseInput');
+  const name = inp.value.trim();
+  if(!name) return;
+  const existing = state.items.find(it => it.name === name || (it.barcode && it.barcode===name));
+  purchaseModal = existing
+    ? { name: existing.name, itemId: existing.id, qty:0, buyPrice: existing.buyPrice, sellPrice: existing.sellPrice, barcode: existing.barcode||'' }
+    : { name: name, itemId: null, qty:0, buyPrice:0, sellPrice:0, barcode:'' };
+  render('purchase');
+}
+function renderPurchaseModal(){
+  const m = purchaseModal;
+  return `
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">${esc(m.name)}</div>
+      <div class="modal-row"><label>الكمية</label><input type="number" value="${m.qty}" oninput="purchaseModal.qty=Number(this.value)||0"></div>
+      <div class="modal-row"><label>سعر الشراء</label><input type="number" value="${m.buyPrice}" oninput="purchaseModal.buyPrice=Number(this.value)||0"></div>
+      <div class="modal-row"><label>سعر البيع</label><input type="number" value="${m.sellPrice}" oninput="purchaseModal.sellPrice=Number(this.value)||0"></div>
+      <div class="modal-row"><label>باركود</label><input value="${esc(m.barcode)}" placeholder="اضف باركود للمنتج" oninput="purchaseModal.barcode=this.value"></div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="purchaseModal=null;render('purchase')">غلق</button>
+        <button class="ok-btn" onclick="confirmPurchaseModal()">تم</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+function confirmPurchaseModal(){
+  const m = purchaseModal;
+  if(!m.qty || m.qty<=0){ alert('من فضلك ادخل كمية أكبر من صفر'); return; }
+  let itemId = m.itemId;
+  if(!itemId){
+    const newItem = { id: uid(), name:m.name, barcode:m.barcode, qty:0, buyPrice:m.buyPrice, sellPrice:m.sellPrice, desc:'', category:'' };
+    state.items.push(newItem);
+    itemId = newItem.id;
+  }else{
+    const it = state.items.find(x=>x.id===itemId);
+    if(it.buyPrice !== m.buyPrice){
+      state.priceHistory.push({ id: uid(), itemId, name: it.name, oldPrice: it.buyPrice, newPrice: m.buyPrice, date: new Date().toISOString() });
+      saveKey('priceHistory');
+    }
+    it.buyPrice = m.buyPrice; it.sellPrice = m.sellPrice; if(m.barcode) it.barcode = m.barcode;
+  }
+  purchaseDraft.lines.push({ itemId, name:m.name, qty:m.qty, buyPrice:m.buyPrice, sellPrice:m.sellPrice });
+  purchaseModal = null;
+  document.getElementById('purchaseInput') && (document.getElementById('purchaseInput').value='');
+  saveKey('items');
+  render('purchase');
+}
+function promptBarcodePurchase(){
+  const code = prompt('ادخل رقم الباركود');
+  if(!code) return;
+  const existing = state.items.find(it => it.barcode && it.barcode===code);
+  purchaseModal = existing
+    ? { name: existing.name, itemId: existing.id, qty:0, buyPrice: existing.buyPrice, sellPrice: existing.sellPrice, barcode: existing.barcode||'' }
+    : { name: 'منتج جديد', itemId: null, qty:0, buyPrice:0, sellPrice:0, barcode: code };
+  render('purchase');
+}
+function removePurchaseLine(i){ purchaseDraft.lines.splice(i,1); render('purchase'); }
+let editingPurchaseId = null;
+let editingPurchaseOriginal = null;
+let purchaseInvoiceMenuOpen = null;
+function openPurchaseCheckout(){
+  if(!purchaseDraft.lines.length){ alert('أضف منتج واحد على الأقل'); return; }
+  const total = purchaseDraft.lines.reduce((s,l)=>s + l.qty*l.buyPrice, 0);
+  if(editingPurchaseOriginal){
+    const o = editingPurchaseOriginal;
+    const fullyPaid = o.paid >= o.total;
+    purchaseCheckout = { total, paidManual: o.paid, fullyPaid, date: o.date, supplierName: o.supplierName };
+  }else{
+    purchaseCheckout = { total, paidManual: total, fullyPaid: true, date: todayISO(), supplierName: '' };
+  }
+  render('purchase');
+}
+function renderPurchaseCheckoutModal(){
+  const c = purchaseCheckout;
+  const paid = c.fullyPaid ? c.total : (Number(c.paidManual)||0);
+  const remaining = Math.max(0, c.total - paid);
+  return `
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:${c.fullyPaid?'var(--danger)':'var(--muted)'};font-size:13px;cursor:pointer" onclick="purchaseCheckout.fullyPaid=!purchaseCheckout.fullyPaid;render('purchase')">${c.fullyPaid?'✓ ':''}فاتورة مسددة</span>
+        <span>فاتورة الشراء${editingPurchaseId?' (تعديل)':''}</span>
+      </div>
+      <div class="modal-row"><label>اجمالى المبلغ</label><input value="${fmt(c.total)}" disabled></div>
+      <div class="modal-row"><label>المبلغ المدفوع</label><input type="number" ${c.fullyPaid?'disabled':''} value="${c.fullyPaid?c.total:(c.paidManual!=null?c.paidManual:c.total)}" oninput="purchaseCheckout.paidManual=Number(this.value)||0"></div>
+      <div class="modal-row"><label>المبلغ المتبقى</label><input value="${fmt(remaining)}" disabled></div>
+      <div class="modal-row"><label>تاريخ الفاتورة</label><input type="date" value="${c.date}" oninput="purchaseCheckout.date=this.value"></div>
+      <div class="modal-row"><label>اسم المورد</label><input value="${esc(c.supplierName)}" placeholder="ادخل اسم المورد" oninput="purchaseCheckout.supplierName=this.value"></div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="purchaseCheckout=null;render('purchase')">غلق</button>
+        <button class="ok-btn" onclick="confirmPurchaseCheckout()">حفظ</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+function confirmPurchaseCheckout(){
+  const c = purchaseCheckout;
+  const paid = c.fullyPaid ? c.total : (Number(c.paidManual)||0);
+  if(editingPurchaseId && editingPurchaseOriginal){
+    editingPurchaseOriginal.lines.forEach(l=>{
+      const it = state.items.find(x=>x.id===l.itemId);
+      if(it) it.qty = Math.max(0, it.qty - l.qty);
+    });
+  }
+  for(const l of purchaseDraft.lines){
+    const it = state.items.find(x=>x.id===l.itemId);
+    if(it) it.qty = (it.qty||0) + l.qty;
+  }
+  const supplierId = ensurePersonByName('suppliers', c.supplierName);
+  const wasEditing = !!editingPurchaseId;
+  if(wasEditing){
+    const p = state.purchases.find(x=>x.id===editingPurchaseId);
+    Object.assign(p, {
+      date: new Date(c.date).toISOString(),
+      lines: purchaseDraft.lines, total: c.total, paid,
+      supplierId, supplierName: (c.supplierName||'').trim()
+    });
+  }else{
+    state.purchases.push({
+      id: uid(), invoiceNo: nextInvoiceNo(state.purchases),
+      date: new Date(c.date).toISOString(),
+      lines: purchaseDraft.lines, total: c.total, paid,
+      supplierId, supplierName: (c.supplierName||'').trim()
+    });
+  }
+  saveKey('items'); saveKey('purchases');
+  purchaseCheckout = null;
+  editingPurchaseId = null; editingPurchaseOriginal = null;
+  alert(wasEditing ? 'تم تعديل فاتورة الشراء بنجاح' : 'تم حفظ فاتورة الشراء بنجاح');
+  startNewPurchase();
+  render(wasEditing ? 'purchaseInvoices' : 'dashboard');
+}
+function editPurchaseInvoice(id){
+  const p = state.purchases.find(x=>x.id===id);
+  if(!p) return;
+  editingPurchaseId = id;
+  editingPurchaseOriginal = {
+    lines: p.lines.map(l=>({...l})),
+    date: new Date(p.date).toISOString().slice(0,10),
+    supplierName: p.supplierName||'',
+    paid: p.paid, total: p.total
+  };
+  purchaseDraft = { lines: p.lines.map(l=>({...l})), paid:null, supplierId:'' };
+  purchaseCheckout = null;
+  purchaseInvoiceMenuOpen = null;
+  render('purchase');
+}
+function deletePurchaseInvoice(id){
+  if(!confirm('هل تريد حذف هذه الفاتورة؟ سيتم خصم الكميات المضافة من المخزون.')) return;
+  const p = state.purchases.find(x=>x.id===id);
+  if(p){
+    p.lines.forEach(l=>{
+      const it = state.items.find(x=>x.id===l.itemId);
+      if(it) it.qty = Math.max(0, it.qty - l.qty);
+    });
+  }
+  state.purchases = state.purchases.filter(x=>x.id!==id);
+  saveKey('items'); saveKey('purchases');
+  purchaseInvoiceMenuOpen = null;
+  render('purchaseInvoices');
+}
+function renderPurchaseInvoices(){
+  const list = state.purchases.slice().sort((a,b)=> new Date(b.date)-new Date(a.date))
+    .filter(p => !invoiceSearch || (p.supplierName||'').includes(invoiceSearch) || String(p.invoiceNo).includes(invoiceSearch));
+  const rows = list.map(p=>`
+    <div style="position:relative;margin-bottom:8px">
+      <div class="report-row" style="margin-bottom:0" onclick="purchaseInvoiceMenuOpen=(purchaseInvoiceMenuOpen==='${p.id}'?null:'${p.id}');render('purchaseInvoices')">
+        <div style="text-align:right"><div>${esc(p.supplierName)||'بدون مورد'}</div><div style="font-size:12px;color:var(--muted)">فاتورة رقم: ${p.invoiceNo||''} - ${p.lines.reduce((a,l)=>a+l.qty,0)} قطعة</div><div style="font-size:11px;color:var(--muted)">${new Date(p.date).toLocaleDateString('ar-EG')}</div></div>
+        <span style="color:var(--danger);font-weight:700">${fmt(p.total)}</span>
+      </div>
+      ${purchaseInvoiceMenuOpen===p.id ? `
+      <div style="background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15);border-radius:10px;overflow:hidden;margin-top:4px">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--navy)" onclick="purchaseInvoiceMenuOpen=null;render('purchaseInvoiceView',{id:'${p.id}'})">عرض الفاتورة</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--navy)" onclick="editPurchaseInvoice('${p.id}')">تعديل الفاتورة</div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;color:var(--danger)" onclick="deletePurchaseInvoice('${p.id}')">حذف الفاتورة</div>
+        <div style="padding:14px 16px;cursor:pointer;color:var(--navy)" onclick="purchaseInvoiceMenuOpen=null;printSavedPurchase('${p.id}')">طباعة الفاتورة</div>
+      </div>` : ''}
+    </div>
+  `).join('') || `<div class="empty-state">لا توجد فواتير شراء بعد</div>`;
+  return `
+  <input class="search-box" placeholder="بحث" value="${esc(invoiceSearch)}" oninput="invoiceSearch=this.value;render('purchaseInvoices')">
+  ${rows}
+  `;
+}
+function renderPurchaseInvoiceView(params){
+  const p = state.purchases.find(x=>x.id===(params&&params.id));
+  if(!p) return `<div class="empty-state">هذه الفاتورة غير موجودة</div>`;
+  const rows = p.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.buyPrice)}</td><td>${fmt(l.qty*l.buyPrice)}</td></tr>`).join('');
+  return `
+  <div class="page-title-row"><h2>فاتورة شراء رقم ${p.invoiceNo||''}</h2><div class="desc">${esc(p.supplierName)||'بدون مورد'} - ${new Date(p.date).toLocaleDateString('ar-EG')}</div></div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>الكمية (${p.lines.reduce((a,l)=>a+l.qty,0)})</th><th>سعر الشراء</th><th>الإجمالي</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="stat-row"><span class="s-value">${fmt(p.total)}</span><span class="s-label">الإجمالي</span></div>
+  <div class="stat-row"><span class="s-value">${fmt(p.paid)}</span><span class="s-label">المدفوع</span></div>
+  <div class="stat-row"><span class="s-value">${fmt(Math.max(0,p.total-p.paid))}</span><span class="s-label">المتبقي</span></div>
+  <div class="invoice-actions" style="margin-top:10px">
+    <button class="btn btn-outline" onclick="editPurchaseInvoice('${p.id}')">✏️ تعديل</button>
+    <button class="btn btn-accent" onclick="printSavedPurchase('${p.id}')">🖨️ طباعة</button>
+  </div>
+  `;
+}
+function printSavedPurchase(id){
+  const p = state.purchases.find(x=>x.id===id);
+  if(!p) return;
+  const rows = p.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.buyPrice)}</td><td>${fmt(l.qty*l.buyPrice)}</td></tr>`).join('');
+  printHTML(`فاتورة شراء رقم ${p.invoiceNo||''} - ${esc(p.supplierName)||'بدون مورد'}`, `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>الكمية (${p.lines.reduce((a,l)=>a+l.qty,0)})</th><th>سعر الشراء</th><th>الإجمالي</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="margin-top:10px;font-size:13px">
+      <div>الإجمالي: ${fmt(p.total)}</div>
+      <div>المدفوع: ${fmt(p.paid)}</div>
+      <div>المتبقي: ${fmt(Math.max(0,p.total-p.paid))}</div>
+    </div>
+  `);
+}
+
+/* ================= CUSTOMERS / SUPPLIERS ================= */
+let peopleSearch = '';
+function renderPeopleList(key, formView){
+  const arr = state[key].filter(p => !peopleSearch || p.name.includes(peopleSearch));
+  const rows = arr.map((p,i)=>`
+    <tr onclick="render('${formView}Form',{id:'${p.id}'})"><td>${i+1}</td><td>${esc(p.name)}</td></tr>
+  `).join('') || `<tr><td colspan="2" class="empty-state">لا يوجد ${key==='customers'?'عملاء':'موردين'} بعد</td></tr>`;
+  return `
+  <div class="search-label">ابحث عن ${key==='customers'?'عميل':'مورد'}</div>
+  <input class="search-box" placeholder="ادخل اسم ${key==='customers'?'العميل':'المورد'}" value="${esc(peopleSearch)}" oninput="peopleSearch=this.value;render('${key}')">
+  <table class="list-table">
+    <thead><tr><th>رقم ${key==='customers'?'العميل':'المورد'}</th><th>${key==='customers'?'العميل':'المورد'}</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <button class="fab" onclick="render('${formView}Form')">+</button>
+  `;
+}
+function renderPersonForm(key, params){
+  const editId = params && params.id;
+  const p = editId ? state[key].find(x=>x.id===editId) : null;
+  const num = editId ? (state[key].findIndex(x=>x.id===editId)+1) : (state[key].length+1);
+  const label = key==='customers'?'العميل':'المورد';
+  return `
+  <div style="text-align:left;color:var(--muted);font-size:13px;margin-bottom:8px">رقم ${label}: ${num}</div>
+  <div class="panel">
+    <div class="field"><label>اسم ${label}</label><input id="p_name" value="${p?esc(p.name):''}" placeholder="ادخل الاسم"></div>
+    <div class="field"><label>العنوان</label><input id="p_address" value="${p?esc(p.address||''):''}" placeholder="ادخل عنوان ${label}"></div>
+    <div class="field"><label>رقم الهاتف</label><input id="p_phone" value="${p?esc(p.phone||''):''}" placeholder="ادخل رقم الهاتف"></div>
+    <div class="field"><label>ملاحظات</label><textarea id="p_notes" rows="2" placeholder="اضف ملاحظاتك">${p?esc(p.notes||''):''}</textarea></div>
+    <div class="invoice-actions">
+      <button class="btn btn-outline" onclick="render('${key}')">مسح</button>
+      <button class="btn btn-primary" onclick="savePerson('${key}',${editId?`'${editId}'`:'null'})">حفظ</button>
+    </div>
+    ${p?`<button class="btn btn-danger btn-block" style="margin-top:10px" onclick="deletePerson('${key}','${editId}')">حذف</button>`:''}
+  </div>
+  `;
+}
+function savePerson(key, id){
+  const name = document.getElementById('p_name').value.trim();
+  if(!name){ alert('من فضلك ادخل الاسم'); return; }
+  const phone = document.getElementById('p_phone').value.trim();
+  const address = document.getElementById('p_address').value.trim();
+  const notes = document.getElementById('p_notes').value.trim();
+  if(id){
+    const p = state[key].find(x=>x.id===id);
+    Object.assign(p, {name, phone, address, notes});
+  }else{
+    state[key].push({ id: uid(), name, phone, address, notes });
+  }
+  saveKey(key);
+  render(key);
+}
+function deletePerson(key, id){
+  if(!confirm('هل تريد الحذف؟')) return;
+  state[key] = state[key].filter(x=>x.id!==id);
+  saveKey(key);
+  render(key);
+}
+
+/* ================= DATE RANGES ================= */
+const OVERVIEW_PERIODS = [
+  {key:'today', label:'اليوم'},
+  {key:'yesterday', label:'أمس'},
+  {key:'thisMonth', label:'هذا الشهر'},
+  {key:'lastMonth', label:'الشهر الماضى'},
+  {key:'all', label:'مدى العمل'},
+];
+const PERIODS = [
+  {key:'today', label:'اليوم'},
+  {key:'yesterday', label:'أمس'},
+  {key:'last7', label:'اخر 7 ايام'},
+  {key:'thisMonth', label:'هذا الشهر'},
+  {key:'last30', label:'اخر 30 يوم'},
+  {key:'lastMonth', label:'الشهر الماضى'},
+  {key:'all', label:'مدى العمل'},
+  {key:'custom', label:'تاريخ خاص...'},
+];
+let customRange = { from: todayISO(), to: todayISO() };
+function getRange(period){
+  const now = new Date();
+  const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if(period==='today'){ const s=startOfDay(now); return [s, new Date(s.getTime()+86400000)]; }
+  if(period==='yesterday'){ const s=startOfDay(now); s.setDate(s.getDate()-1); return [s, new Date(s.getTime()+86400000)]; }
+  if(period==='last7'){ const e=startOfDay(now); e.setDate(e.getDate()+1); const s=new Date(e.getTime()-7*86400000); return [s,e]; }
+  if(period==='thisMonth'){ const s=new Date(now.getFullYear(), now.getMonth(),1); return [s, new Date(now.getFullYear(), now.getMonth()+1,1)]; }
+  if(period==='last30'){ const e=startOfDay(now); e.setDate(e.getDate()+1); const s=new Date(e.getTime()-30*86400000); return [s,e]; }
+  if(period==='lastMonth'){ const s=new Date(now.getFullYear(), now.getMonth()-1,1); return [s, new Date(now.getFullYear(), now.getMonth(),1)]; }
+  if(period==='custom'){ const s=new Date(customRange.from); const e=new Date(customRange.to); e.setDate(e.getDate()+1); return [s,e]; }
+  return [new Date(0), new Date(8640000000000000)];
+}
+function inRange(dateStr, range){ const d = new Date(dateStr); return d>=range[0] && d<range[1]; }
+function salesIn(period){ const r=getRange(period); return state.sales.filter(s=>inRange(s.date,r)); }
+function purchasesIn(period){ const r=getRange(period); return state.purchases.filter(s=>inRange(s.date,r)); }
+function expensesIn(period){ const r=getRange(period); return state.expenses.filter(s=>inRange(s.date,r)); }
+
+function salesTotal(period){ return salesIn(period).reduce((a,s)=>a+s.total,0); }
+function salesProfit(period){
+  return salesIn(period).reduce((a,s)=>{
+    const lineProfit = s.lines.reduce((x,l)=>x + l.qty*(l.price-(l.cost||0)), 0);
+    return a + lineProfit - (s.discount||0);
+  },0);
+}
+function topProducts(period, by){ // by: 'qty' or 'profit'
+  const map = {};
+  salesIn(period).forEach(s=>{
+    s.lines.forEach(l=>{
+      if(!map[l.name]) map[l.name] = {qty:0, profit:0};
+      map[l.name].qty += l.qty;
+      map[l.name].profit += l.qty*(l.price-(l.cost||0));
+    });
+  });
+  const arr = Object.entries(map).map(([name,v])=>({name, ...v}));
+  arr.sort((a,b)=> by==='qty' ? b.qty-a.qty : b.profit-a.profit);
+  return arr.slice(0,3);
+}
+
+/* ================= ACCOUNTS (ادارة الحسابات) ================= */
+function renderAccounts(){
+  return `
+  <div class="tabbar">
+    <button class="${accountsTab==='overview'?'active':''}" onclick="accountsTab='overview';render('accounts')">نظرة عامة</button>
+    <button class="${accountsTab==='aggregated'?'active':''}" onclick="accountsTab='aggregated';render('accounts')">بيانات مجمعة</button>
+    <button class="${accountsTab==='reports'?'active':''}" onclick="accountsTab='reports';render('accounts')">التقارير</button>
+  </div>
+  <div class="tab-content">
+    ${accountsTab==='overview' ? renderOverviewTab() : accountsTab==='aggregated' ? renderAggregatedTab() : renderReportsTab()}
+  </div>
+  `;
+}
+function renderOverviewTab(){
+  const subs = [
+    {key:'sales', label:'المبيعات'},
+    {key:'profits', label:'الارباح'},
+    {key:'topQty', label:'المنتجات الاكثر مبيعا'},
+    {key:'topProfit', label:'المنتجات الاكثر ربحا'},
+  ];
+  const cards = OVERVIEW_PERIODS.map(p=>{
+    let valueHtml;
+    if(overviewSub==='sales') valueHtml = `<div class="p-value">${fmt(salesTotal(p.key))}</div>`;
+    else if(overviewSub==='profits') valueHtml = `<div class="p-value">${fmt(salesProfit(p.key))}</div>`;
+    else {
+      const list = topProducts(p.key, overviewSub==='topQty'?'qty':'profit');
+      valueHtml = list.length
+        ? `<div class="p-value rank">${list.map((x,i)=>`${i+1}-${esc(x.name)}`).join(' ')}</div>`
+        : `<div class="p-value rank" style="color:var(--muted)">لا توجد بيانات</div>`;
+    }
+    return `<div class="period-card"><div class="p-label">${p.label}</div>${valueHtml}</div>`;
+  }).join('');
+  return `
+  <div class="subtabbar">
+    ${subs.map(s=>`<button class="${overviewSub===s.key?'active':''}" onclick="overviewSub='${s.key}';render('accounts')">${s.label}</button>`).join('')}
+  </div>
+  <div style="padding-top:12px">${cards}</div>
+  `;
+}
+function renderAggregatedTab(){
+  const r = dateFilter;
+  let rows;
+  if(aggSub==='sales'){
+    const gross = salesIn(r).reduce((a,s)=>a + s.lines.reduce((x,l)=>x+l.qty*l.price,0), 0);
+    const discounts = salesIn(r).reduce((a,s)=>a+(s.discount||0),0);
+    const net = gross - discounts;
+    const cash = salesIn(r).reduce((a,s)=>a+(s.paid!=null?s.paid:s.total),0);
+    const remaining = salesIn(r).reduce((a,s)=>a + Math.max(0,(s.total-(s.paid!=null?s.paid:s.total))),0);
+    const profit = salesProfit(r);
+    const exp = expensesIn(r).reduce((a,e)=>a+e.amount,0);
+    const profitAfter = profit - exp;
+    const pct = net>0 ? (profitAfter/net*100) : 0;
+    rows = [
+      ['اجمالى المبيعات', fmt(gross)],
+      ['اجمالى الخصومات', fmt(discounts)],
+      ['اجمالى المبيعات بعد الخصم', fmt(net)],
+      ['اجمالى الايرادات النقدية', fmt(cash)],
+      ['اجمالى المبالغ المتبقية عند العملاء', fmt(remaining)],
+      ['اجمالى الارباح', fmt(profit)],
+      ['اجمالى المصروفات', fmt(exp)],
+      ['اجمالى الارباح بعد خصم المصروفات', fmt(profitAfter)],
+      ['نسبة الارباح', pct.toFixed(2)+' %'],
+    ];
+  }else{
+    const totalP = purchasesIn(r).reduce((a,p)=>a+p.total,0);
+    const paid = purchasesIn(r).reduce((a,p)=>a+(p.paid!=null?p.paid:p.total),0);
+    const remaining = purchasesIn(r).reduce((a,p)=>a+Math.max(0,(p.total-(p.paid!=null?p.paid:p.total))),0);
+    rows = [
+      ['اجمالى المشتريات', fmt(totalP)],
+      ['اجمالى المبالغ المدفوعة', fmt(paid)],
+      ['اجمالى المبالغ المتبقية للموردين', fmt(remaining)],
+    ];
+  }
+  return `
+  <div class="subtabbar">
+    <button class="${aggSub==='sales'?'active':''}" onclick="aggSub='sales';render('accounts')">المبيعات</button>
+    <button class="${aggSub==='purchases'?'active':''}" onclick="aggSub='purchases';render('accounts')">المشتريات</button>
+  </div>
+  <div style="padding-top:12px">
+    ${rows.map(([l,v])=>`<div class="stat-row"><span class="s-value">${v}</span><span class="s-label">${l}</span></div>`).join('')}
+  </div>
+  ${renderDateFilterBar()}
+  `;
+}
+const REPORT_ROWS = [
+  {key:'sales', label:'المبيعات'},
+  {key:'profits', label:'الارباح'},
+  {key:'customers', label:'العملاء'},
+  {key:'suppliers', label:'الموردين'},
+  {key:'purchases', label:'المشتريات'},
+  {key:'warehouse', label:'المخزن'},
+  {key:'stocktakeReport', label:'جرد المخزن'},
+  {key:'priceHistory', label:'حركة تغيير اسعار الشراء لصنف'},
+  {key:'expensesDetailed', label:'تقرير مصروفات مفصل'},
+  {key:'expensesSummary', label:'تقرير مصروفات مجمل'},
+];
+let reportOpen = null;
+function renderReportsTab(){
+  if(reportOpen) return renderReportDetail(reportOpen);
+  return `
+  <div>${REPORT_ROWS.map(r=>`
+    <div class="report-row" onclick="reportOpen='${r.key}';render('accounts')">
+      <span>${r.label}</span><span class="arrow">‹</span>
+    </div>
+  `).join('')}</div>
+  ${renderDateFilterBar()}
+  `;
+}
+function renderReportDetail(key){
+  const r = dateFilter;
+  let body = '';
+  if(key==='sales'){
+    const list = salesIn(r);
+    body = list.length ? list.map(s=>`<div class="stat-row"><span class="s-value">${fmt(s.total)}</span><span class="s-label">${new Date(s.date).toLocaleDateString('ar-EG')}</span></div>`).join('') : `<div class="empty-state">لا توجد مبيعات في هذه الفترة</div>`;
+  }else if(key==='profits'){
+    body = `<div class="stat-row"><span class="s-value">${fmt(salesProfit(r))}</span><span class="s-label">إجمالي الأرباح</span></div>`;
+  }else if(key==='customers'){
+    body = state.customers.length ? state.customers.map(c=>{
+      const owed = state.sales.filter(s=>s.customerId===c.id).reduce((a,s)=>a+Math.max(0,s.total-(s.paid!=null?s.paid:s.total)),0);
+      return `<div class="stat-row"><span class="s-value">${fmt(owed)}</span><span class="s-label">${esc(c.name)}</span></div>`;
+    }).join('') : `<div class="empty-state">لا يوجد عملاء</div>`;
+  }else if(key==='suppliers'){
+    body = state.suppliers.length ? state.suppliers.map(sp=>{
+      const owed = state.purchases.filter(p=>p.supplierId===sp.id).reduce((a,p)=>a+Math.max(0,p.total-(p.paid!=null?p.paid:p.total)),0);
+      return `<div class="stat-row"><span class="s-value">${fmt(owed)}</span><span class="s-label">${esc(sp.name)}</span></div>`;
+    }).join('') : `<div class="empty-state">لا يوجد موردين</div>`;
+  }else if(key==='purchases'){
+    const list = purchasesIn(r);
+    body = list.length ? list.map(p=>`<div class="stat-row"><span class="s-value">${fmt(p.total)}</span><span class="s-label">${new Date(p.date).toLocaleDateString('ar-EG')}</span></div>`).join('') : `<div class="empty-state">لا توجد مشتريات في هذه الفترة</div>`;
+  }else if(key==='warehouse'){
+    body = state.items.length ? state.items.map(it=>`<div class="stat-row"><span class="s-value">${it.qty} × ${fmt(it.sellPrice)}</span><span class="s-label">${esc(it.name)}</span></div>`).join('') : `<div class="empty-state">لا توجد منتجات</div>`;
+  }else if(key==='stocktakeReport'){
+    const list = state.stocktakes.slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+    body = list.length ? list.map(s=>{
+      const typeLabel = (STOCKTAKE_TYPES.find(x=>x.key===s.type)||{}).label || s.type;
+      const diffCount = s.lines.filter(l=>l.countedQty!==l.systemQty).length;
+      return `<div class="report-row" onclick="render('stocktakeView',{id:'${s.id}'})"><span>${typeLabel} - ${new Date(s.date).toLocaleDateString('ar-EG')}</span><span style="color:${diffCount?'var(--danger)':'var(--muted)'}">${diffCount} فرق</span></div>`;
+    }).join('') : `<div class="empty-state">لا توجد عمليات جرد بعد</div>`;
+  }else if(key==='priceHistory'){
+    const list = state.priceHistory.slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+    body = list.length ? list.map(h=>`<div class="stat-row"><span class="s-value">${fmt(h.oldPrice)} ← ${fmt(h.newPrice)}</span><span class="s-label">${esc(h.name)} - ${new Date(h.date).toLocaleDateString('ar-EG')}</span></div>`).join('') : `<div class="empty-state">لا يوجد تغييرات في أسعار الشراء بعد</div>`;
+  }else if(key==='expensesDetailed'){
+    const list = expensesIn(r);
+    body = list.length ? list.map(e=>`<div class="stat-row"><span class="s-value">${fmt(e.amount)}</span><span class="s-label">${esc(e.note||'')} - ${new Date(e.date).toLocaleDateString('ar-EG')}</span></div>`).join('') : `<div class="empty-state">لا توجد مصروفات في هذه الفترة</div>`;
+  }else if(key==='expensesSummary'){
+    const total = expensesIn(r).reduce((a,e)=>a+e.amount,0);
+    body = `<div class="stat-row"><span class="s-value">${fmt(total)}</span><span class="s-label">إجمالي المصروفات</span></div>`;
+  }
+  return `
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <button class="back-btn" style="color:var(--navy)" onclick="reportOpen=null;render('accounts')">→</button>
+    <strong>${(REPORT_ROWS.find(x=>x.key===key)||{}).label}</strong>
+  </div>
+  ${body}
+  ${renderDateFilterBar()}
+  `;
+}
+function renderDateFilterBar(){
+  return `
+  ${dateFilter==='custom' ? `
+  <div style="position:fixed;bottom:52px;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;z-index:10">
+    <input type="date" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px" value="${customRange.from}" onchange="customRange.from=this.value;render('accounts')">
+    <input type="date" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px" value="${customRange.to}" onchange="customRange.to=this.value;render('accounts')">
+  </div>` : ''}
+  <div class="date-filter-bar">
+    <span>📅</span>
+    <select onchange="dateFilter=this.value;render('accounts')">
+      ${PERIODS.map(p=>`<option value="${p.key}" ${dateFilter===p.key?'selected':''}>${p.label}</option>`).join('')}
+    </select>
+  </div>
+  `;
+}
+
+/* ================= EXPENSES (المصروفات) ================= */
+function renderExpenses(){
+  const list = state.expenses.slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const rows = list.map(e=>`
+    <tr onclick="render('expenseForm',{id:'${e.id}'})">
+      <td>${new Date(e.date).toLocaleDateString('ar-EG')}</td>
+      <td>${esc(e.note||'')}</td>
+      <td>${fmt(e.amount)}</td>
+    </tr>
+  `).join('') || `<tr><td colspan="3" class="empty-state">لا توجد مصروفات بعد</td></tr>`;
+  return `
+  <table class="list-table">
+    <thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <button class="fab" onclick="render('expenseForm')">+</button>
+  `;
+}
+function renderExpenseForm(params){
+  const editId = params && params.id;
+  const e = editId ? state.expenses.find(x=>x.id===editId) : null;
+  return `
+  <div class="panel">
+    <div class="field"><label>المبلغ</label><input id="e_amount" type="number" value="${e?e.amount:''}" placeholder="المبلغ"></div>
+    <div class="field"><label>البيان (اختياري)</label><input id="e_note" value="${e?esc(e.note||''):''}" placeholder="بيان المصروف"></div>
+    <div class="field"><label>التاريخ</label><input id="e_date" type="date" value="${e?new Date(e.date).toISOString().slice(0,10):todayISO()}"></div>
+    <button class="btn btn-primary btn-block" onclick="saveExpense(${editId?`'${editId}'`:'null'})">حفظ</button>
+    ${e?`<button class="btn btn-danger btn-block" style="margin-top:10px" onclick="deleteExpense('${editId}')">حذف</button>`:''}
+  </div>
+  `;
+}
+function saveExpense(id){
+  const amount = Number(document.getElementById('e_amount').value)||0;
+  if(!amount){ alert('من فضلك ادخل المبلغ'); return; }
+  const note = document.getElementById('e_note').value.trim();
+  const date = new Date(document.getElementById('e_date').value).toISOString();
+  if(id){
+    const e = state.expenses.find(x=>x.id===id);
+    Object.assign(e, {amount, note, date});
+  }else{
+    state.expenses.push({ id: uid(), amount, note, date });
+  }
+  saveKey('expenses');
+  render('expenses');
+}
+function deleteExpense(id){
+  if(!confirm('هل تريد الحذف؟')) return;
+  state.expenses = state.expenses.filter(x=>x.id!==id);
+  saveKey('expenses');
+  render('expenses');
+}
+
+/* ================= STOCKTAKE (الجرد) ================= */
+const STOCKTAKE_TYPES = [
+  {key:'daily', label:'يومي', ic:'☀️'},
+  {key:'weekly', label:'اسبوعي', ic:'📅'},
+  {key:'monthly', label:'شهري', ic:'🗓️'},
+  {key:'yearly', label:'سنوي', ic:'📆'},
+];
+let stocktakeDraft = null;
+function renderStocktakes(){
+  const list = state.stocktakes.slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const typeLabel = t => (STOCKTAKE_TYPES.find(x=>x.key===t)||{}).label || t;
+  const rows = list.map(s=>{
+    const diffCount = s.lines.filter(l=>l.countedQty!==l.systemQty).length;
+    return `
+    <div class="report-row" onclick="render('stocktakeView',{id:'${s.id}'})">
+      <span>${typeLabel(s.type)} - ${new Date(s.date).toLocaleDateString('ar-EG')} ${diffCount?`<span style="color:var(--danger);font-size:12px">(${diffCount} فرق)</span>`:''}</span>
+      <span class="arrow">‹</span>
+    </div>`;
+  }).join('') || `<div class="empty-state">لا توجد عمليات جرد بعد</div>`;
+  return `
+  <div class="panel">
+    <h3>بدء جرد جديد</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${STOCKTAKE_TYPES.map(t=>`<button class="btn btn-outline" onclick="startStocktake('${t.key}')">${t.ic} ${t.label}</button>`).join('')}
+    </div>
+  </div>
+  <div class="page-title-row"><h2 style="font-size:15.5px">سجل عمليات الجرد</h2></div>
+  ${rows}
+  `;
+}
+function lastStocktakeDate(){
+  if(!state.stocktakes.length) return null;
+  return state.stocktakes.slice().sort((a,b)=> new Date(b.date)-new Date(a.date))[0].date;
+}
+function dispensedSince(itemId, sinceDate){
+  const since = sinceDate ? new Date(sinceDate) : new Date(0);
+  return state.sales
+    .filter(s => new Date(s.date) > since)
+    .reduce((sum,s)=> sum + s.lines.filter(l=>l.itemId===itemId).reduce((a,l)=>a+l.qty,0), 0);
+}
+function startStocktake(type){
+  const since = lastStocktakeDate();
+  stocktakeDraft = {
+    type,
+    since,
+    lines: state.items.map(it => ({
+      itemId: it.id, name: it.name,
+      systemQty: it.qty,
+      dispensed: dispensedSince(it.id, since),
+      countedQty: it.qty
+    }))
+  };
+  render('stocktakeForm');
+}
+function renderStocktakeForm(){
+  if(!stocktakeDraft){ return `<div class="empty-state">من فضلك اختر نوع الجرد من صفحة الجرد أولاً</div>`; }
+  const typeLabel = (STOCKTAKE_TYPES.find(x=>x.key===stocktakeDraft.type)||{}).label || '';
+  const sinceLabel = stocktakeDraft.since ? new Date(stocktakeDraft.since).toLocaleDateString('ar-EG') : 'بداية التشغيل';
+  const rows = stocktakeDraft.lines.map((l,i)=>`
+    <tr>
+      <td>${esc(l.name)}</td>
+      <td>${l.dispensed}</td>
+      <td>${l.systemQty}</td>
+      <td><input type="number" style="width:70px;padding:6px;border:1px solid var(--border);border-radius:8px;text-align:center" value="${l.countedQty}" oninput="stocktakeDraft.lines[${i}].countedQty=Number(this.value)||0"></td>
+    </tr>
+  `).join('') || `<tr><td colspan="4" class="empty-state">لا توجد منتجات في المخزن</td></tr>`;
+  return `
+  <div class="page-title-row"><h2>جرد ${typeLabel}</h2><div class="desc">المنصرف محسوب من آخر جرد (${sinceLabel}) حتى الآن. راجع الموجود فعلياً وعدّله لو مختلف</div></div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>المنصرف</th><th>الموجود بالنظام</th><th>الموجود فعلياً</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="invoice-actions" style="margin-top:14px">
+    <button class="btn btn-outline" onclick="stocktakeDraft=null;render('stocktakes')">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveStocktake()">حفظ الجرد</button>
+  </div>
+  `;
+}
+function saveStocktake(){
+  if(!stocktakeDraft) return;
+  stocktakeDraft.lines.forEach(l=>{
+    const it = state.items.find(x=>x.id===l.itemId);
+    if(it) it.qty = l.countedQty;
+  });
+  const record = { id: uid(), type: stocktakeDraft.type, date: new Date().toISOString(), since: stocktakeDraft.since, lines: stocktakeDraft.lines };
+  state.stocktakes.push(record);
+  saveKey('items'); saveKey('stocktakes');
+  const diffCount = record.lines.filter(l=>l.countedQty!==l.systemQty).length;
+  alert(diffCount ? `تم حفظ الجرد، وتم تحديث كمية ${diffCount} منتج.` : 'تم حفظ الجرد، الكميات مطابقة للنظام بالكامل.');
+  stocktakeDraft = null;
+  render('stocktakes');
+}
+function renderStocktakeView(params){
+  const s = state.stocktakes.find(x=>x.id===(params&&params.id));
+  if(!s) return `<div class="empty-state">هذا الجرد غير موجود</div>`;
+  const typeLabel = (STOCKTAKE_TYPES.find(x=>x.key===s.type)||{}).label || s.type;
+  const rows = s.lines.map(l=>{
+    const diff = l.countedQty - l.systemQty;
+    return `
+    <tr>
+      <td>${esc(l.name)}</td>
+      <td>${l.dispensed!=null?l.dispensed:'-'}</td>
+      <td>${l.systemQty}</td>
+      <td>${l.countedQty}</td>
+      <td style="color:${diff===0?'var(--muted)':(diff>0?'var(--success)':'var(--danger)')}">${diff>0?'+':''}${diff}</td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="page-title-row"><h2>جرد ${typeLabel} - ${new Date(s.date).toLocaleDateString('ar-EG')}</h2></div>
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>المنصرف</th><th>الموجود بالنظام</th><th>الموجود فعلياً</th><th>الفرق</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <button class="btn btn-outline btn-block" style="margin-top:14px" onclick="printStocktake('${s.id}')">🖨️ طباعة تقرير الجرد</button>
+  `;
+}
+function printStocktake(id){
+  const s = state.stocktakes.find(x=>x.id===id);
+  if(!s) return;
+  const typeLabel = (STOCKTAKE_TYPES.find(x=>x.key===s.type)||{}).label || s.type;
+  const rows = s.lines.map(l=>{
+    const diff = l.countedQty - l.systemQty;
+    return `<tr><td>${esc(l.name)}</td><td>${l.dispensed!=null?l.dispensed:'-'}</td><td>${l.systemQty}</td><td>${l.countedQty}</td><td>${diff>0?'+':''}${diff}</td></tr>`;
+  }).join('');
+  printHTML(`تقرير جرد ${typeLabel} - ${new Date(s.date).toLocaleDateString('ar-EG')}`, `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>المنصرف</th><th>الموجود بالنظام</th><th>الموجود فعلياً</th><th>الفرق</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `);
+}
+
+/* ================= EXPIRY ALERTS (تنبيهات الصلاحية) ================= */
+function renderExpiryAlertsPage(){
+  const alerts = state.items
+    .map(it=>({it, st:getExpiryStatus(it.expiry)}))
+    .filter(x=>x.st && x.st.level!=='ok')
+    .sort((a,b)=> a.st.days - b.st.days);
+  const rows = alerts.map(({it,st})=>`
+    <tr onclick="render('warehouseForm',{id:'${it.id}'})">
+      <td>${esc(it.name)}</td>
+      <td>${new Date(it.expiry).toLocaleDateString('ar-EG')}</td>
+      <td style="color:${st.level==='expired'?'var(--danger)':'#B0532E'}">${st.level==='expired'?'🔴 منتهي':'🟠 '+st.label}</td>
+    </tr>
+  `).join('') || `<tr><td colspan="3" class="empty-state">لا توجد منتجات قريبة من انتهاء الصلاحية 🎉</td></tr>`;
+  return `
+  <table class="list-table">
+    <thead><tr><th>المنتج</th><th>تاريخ الانتهاء</th><th>الحالة</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  `;
+}
+
+/* ================= PRINTING ================= */
+function printHTML(title, bodyHtml){
+  const area = document.getElementById('printArea');
+  area.innerHTML = `
+    <div style="text-align:center;margin-bottom:10px">
+      <h2 style="margin:0">شركة الدكروري للمواد الغذائية</h2>
+      <div style="font-size:13px;color:#555">${esc(title)}</div>
+      <div style="font-size:11px;color:#888">${new Date().toLocaleString('ar-EG')}</div>
+    </div>
+    ${bodyHtml}
+  `;
+  window.print();
+}
+function printSaleDraft(){
+  if(!saleDraft.lines.length){ alert('أضف منتج واحد على الأقل قبل الطباعة'); return; }
+  const total = saleDraft.lines.reduce((s,l)=>s + l.qty*l.price, 0) - (Number(saleDraft.discount)||0);
+  const rows = saleDraft.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.price)}</td><td>${fmt(l.qty*l.price)}</td></tr>`).join('');
+  printHTML('فاتورة بيع', `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>الكمية (${saleDraft.lines.reduce((a,l)=>a+l.qty,0)})</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="text-align:left;margin-top:10px;font-weight:bold">الاجمالى: ${fmt(total)}</div>
+  `);
+}
+function printPurchaseDraft(){
+  if(!purchaseDraft.lines.length){ alert('أضف منتج واحد على الأقل قبل الطباعة'); return; }
+  const total = purchaseDraft.lines.reduce((s,l)=>s + l.qty*l.buyPrice, 0);
+  const rows = purchaseDraft.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${fmt(l.buyPrice)}</td><td>${fmt(l.qty*l.buyPrice)}</td></tr>`).join('');
+  printHTML('فاتورة شراء', `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>الكمية (${purchaseDraft.lines.reduce((a,l)=>a+l.qty,0)})</th><th>سعر الشراء</th><th>الإجمالي</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="text-align:left;margin-top:10px;font-weight:bold">الاجمالى: ${fmt(total)}</div>
+  `);
+}
+function printWarehouse(){
+  const rows = state.items.map(it=>`<tr><td>${esc(it.name)}</td><td>${it.qty}</td><td>${fmt(it.sellPrice)}</td></tr>`).join('');
+  printHTML('تقرير المخزن', `
+    <table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr><th>المنتج</th><th>الكمية (${state.items.reduce((a,it)=>a+(it.qty||0),0)})</th><th>السعر</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `);
+}
+
+/* ================= SETTINGS / BACKUP ================= */
+function renderSettings(){
+  const connected = !!gAccessToken;
+  const email = gUserEmail || '';
+  const lastBackup = localStorage.getItem('dekroure_drive_last_backup');
+  return `
+  <div class="page-title-row"><h2>الإعدادات والنسخ الاحتياطي</h2><div class="desc">النسخ الاحتياطي محلياً وعلى جوجل درايف</div></div>
+
+  <div class="panel">
+    <h3>📁 نسخة احتياطية محلية (ملف على الجهاز)</h3>
+    <p style="margin-bottom:12px;color:var(--muted);font-size:13.5px">تنزيل نسخة كملف، أو استعادة نسخة من ملف محفوظ على الجهاز.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="backupData()">💾 تنزيل نسخة احتياطية</button>
+      <button class="btn btn-outline" onclick="document.getElementById('restoreFile').click()">🔄 استعادة من ملف</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>☁️ مزامنة جوجل درايف (بين أكثر من موبايل)</h3>
+    <p style="margin-bottom:12px;color:var(--muted);font-size:13.5px">سجل دخول بحساب جوجل الشركة على كل جهاز، وبعدها تقدر ترفع نسخة أو تستعيد آخر نسخة محفوظة على نفس الحساب من أي موبايل.</p>
+
+    ${connected ? `
+      <div class="badge badge-success" style="margin-bottom:12px">متصل${email?': '+esc(email):''}</div><br>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-primary" onclick="driveBackupNow()">⬆️ رفع نسخة على درايف الآن</button>
+        <button class="btn btn-outline" onclick="driveRestoreLatest()">⬇️ استعادة آخر نسخة من درايف</button>
+        <button class="btn btn-danger" onclick="disconnectGoogle()">قطع الاتصال</button>
+      </div>
+      ${lastBackup ? `<div style="margin-top:10px;color:var(--muted);font-size:13px">آخر رفع على درايف: ${esc(lastBackup)}</div>` : ''}
+    ` : `
+      <button class="btn btn-primary btn-block" onclick="connectGoogle()">تسجيل الدخول بجوجل</button>
+    `}
+  </div>
+
+  <div class="panel" style="border:1px solid #F5C6C6;background:#FFF6F6">
+    <h3 style="color:var(--danger)">🗑️ حذف كل البيانات</h3>
+    <p style="margin-bottom:12px;color:var(--muted);font-size:13.5px">يمسح كل الأصناف والعملاء والموردين والفواتير والمصروفات والجرد نهائياً من هذا الجهاز، عشان تبدأ تسجيل بياناتك الحقيقية من الصفر. الإجراء ده لا يمكن التراجع عنه.</p>
+    <button class="btn btn-danger btn-block" onclick="resetAllData()">حذف كل البيانات نهائياً</button>
+  </div>
+  `;
+}
+function resetAllData(){
+  if(!confirm('هل أنت متأكد من حذف كل البيانات (الأصناف، العملاء، الموردين، الفواتير، المصروفات، الجرد) نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+  if(!confirm('تأكيد أخير: سيتم مسح كل شيء نهائياً من هذا الجهاز. متابعة؟')) return;
+  KEYS.forEach(k=>{
+    state[k] = [];
+    localStorage.removeItem('dekroure_accounting_' + k);
+  });
+  alert('تم حذف كل البيانات بنجاح. تقدر دلوقتي تبدأ تسجيل بياناتك الحقيقية.');
+  render('dashboard');
+}
+
+function backupData(){
+  try{
+    const payload = {
+      app: 'نظام حسابات شركة الدكروري',
+      version: 1,
+      createdAt: new Date().toISOString(),
+      state: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const name = `نسخة-احتياطية-الدكروري-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`;
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    alert('تم إنشاء النسخة الاحتياطية بنجاح.');
+  }catch(e){
+    console.error(e);
+    alert('تعذر إنشاء النسخة الاحتياطية.');
+  }
+}
+
+async function restoreData(event){
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if(!file) return;
+
+  if(!confirm('سيتم استبدال البيانات الحالية بالنسخة الاحتياطية. هل تريد المتابعة؟')) return;
+
+  try{
+    const raw = await file.text();
+    const payload = JSON.parse(raw);
+
+    if(!payload || !payload.state || typeof payload.state !== 'object'){
+      throw new Error('ملف النسخة الاحتياطية غير صالح');
+    }
+
+    for(const k of KEYS){
+      const value = Array.isArray(payload.state[k]) ? payload.state[k] : [];
+      state[k] = value;
+      localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(value));
+    }
+
+    alert('تمت استعادة البيانات بنجاح. سيتم تحديث البرنامج.');
+    location.reload();
+  }catch(e){
+    console.error(e);
+    alert('فشل الاستعادة: ملف النسخة الاحتياطية غير صالح أو تالف.');
+  }
+}
+
+/* ================= GOOGLE DRIVE SYNC ================= */
+const DRIVE_FILE_NAME = 'دكروري-نسخة-احتياطية.json';
+const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+const DEFAULT_GCLIENT_ID = '941736124236-ppvnnbj5bltqle91qkh4grngl9fdhpk4.apps.googleusercontent.com';
+const G_TOKEN_KEY = 'dekroure_g_token';
+const G_EMAIL_KEY = 'dekroure_g_email';
+const G_EXPIRY_KEY = 'dekroure_g_expiry';
+let gClientId = DEFAULT_GCLIENT_ID;
+let gAccessToken = null;
+let gUserEmail = null;
+let gTokenExpiry = 0;
+let gTokenClient = null;
+
+function buildBackupPayload(){
+  return {
+    app: 'نظام حسابات شركة الدكروري',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    state: state
+  };
+}
+
+(function restoreGoogleSession(){
+  try{
+    const tok = localStorage.getItem(G_TOKEN_KEY);
+    const exp = Number(localStorage.getItem(G_EXPIRY_KEY) || 0);
+    const email = localStorage.getItem(G_EMAIL_KEY);
+    if(tok && exp && exp > Date.now()){
+      gAccessToken = tok;
+      gTokenExpiry = exp;
+      gUserEmail = email || null;
+    }else if(email){
+      gUserEmail = email;
+    }
+  }catch(e){}
+})();
+
+function persistGoogleSession(){
+  try{
+    if(gAccessToken){
+      localStorage.setItem(G_TOKEN_KEY, gAccessToken);
+      localStorage.setItem(G_EXPIRY_KEY, String(gTokenExpiry));
+      if(gUserEmail) localStorage.setItem(G_EMAIL_KEY, gUserEmail);
+    }
+  }catch(e){}
+}
+
+function clearGoogleSession(){
+  try{
+    localStorage.removeItem(G_TOKEN_KEY);
+    localStorage.removeItem(G_EXPIRY_KEY);
+    localStorage.removeItem(G_EMAIL_KEY);
+  }catch(e){}
+}
+
+function initGTokenClient(callback){
+  if(!window.google || !google.accounts || !google.accounts.oauth2){
+    alert('تعذر تحميل خدمة تسجيل دخول جوجل، تأكد من اتصالك بالإنترنت وحاول مرة أخرى.');
+    return null;
+  }
+  return google.accounts.oauth2.initTokenClient({
+    client_id: gClientId,
+    scope: DRIVE_SCOPES,
+    callback: callback
+  });
+}
+
+function handleTokenResponse(resp){
+  return new Promise(async (resolve)=>{
+    if(resp.error){ resolve(false); return; }
+    gAccessToken = resp.access_token;
+    const expiresInSec = Number(resp.expires_in || 3500);
+    gTokenExpiry = Date.now() + (expiresInSec * 1000) - 60000;
+    try{
+      const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers:{ Authorization: 'Bearer ' + gAccessToken }
+      });
+      const info = await r.json();
+      gUserEmail = info.email || gUserEmail || null;
+    }catch(e){}
+    persistGoogleSession();
+    resolve(true);
+  });
+}
+
+function silentRenewGoogleToken(){
+  return new Promise((resolve)=>{
+    if(!gClientId || !window.google || !google.accounts || !google.accounts.oauth2){
+      resolve(false); return;
+    }
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: gClientId,
+      scope: DRIVE_SCOPES,
+      hint: gUserEmail || undefined,
+      callback: async (resp)=>{
+        const ok = await handleTokenResponse(resp);
+        resolve(ok);
+      }
+    });
+    try{
+      client.requestAccessToken({ prompt: '' });
+    }catch(e){ resolve(false); }
+  });
+}
+
+async function ensureAccessToken(){
+  if(gAccessToken && gTokenExpiry > Date.now()) return true;
+  const renewed = await silentRenewGoogleToken();
+  if(renewed) { render('settings'); return true; }
+  return false;
+}
+
+function connectGoogle(){
+  if(!gClientId){ alert('من فضلك احفظ Client ID أولاً.'); return; }
+  gTokenClient = initGTokenClient(async (resp)=>{
+    const ok = await handleTokenResponse(resp);
+    if(!ok){ alert('فشل تسجيل الدخول: ' + (resp.error || '')); return; }
+    render('settings');
+  });
+  if(!gTokenClient) return;
+  gTokenClient.requestAccessToken({ prompt: gUserEmail ? '' : 'consent' });
+}
+
+function disconnectGoogle(){
+  if(gAccessToken && window.google && google.accounts && google.accounts.oauth2){
+    google.accounts.oauth2.revoke(gAccessToken, ()=>{});
+  }
+  gAccessToken = null;
+  gUserEmail = null;
+  gTokenExpiry = 0;
+  clearGoogleSession();
+  render('settings');
+}
+
+async function driveFindBackupFile(){
+  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and trashed=false`);
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name,modifiedTime)`, {
+    headers:{ Authorization: 'Bearer ' + gAccessToken }
+  });
+  if(!r.ok) throw new Error('drive list failed');
+  const data = await r.json();
+  return (data.files && data.files[0]) || null;
+}
+
+async function driveBackupNow(){
+  const ok = await ensureAccessToken();
+  if(!ok){ alert('من فضلك سجل الدخول بجوجل أولاً.'); return; }
+  try{
+    const existing = await driveFindBackupFile();
+    const payload = JSON.stringify(buildBackupPayload(), null, 2);
+    const metadata = { name: DRIVE_FILE_NAME, mimeType: 'application/json' };
+    const boundary = 'dekroure_boundary_' + Date.now();
+    const body =
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(existing?{}:metadata)}\r\n` +
+      `--${boundary}\r\nContent-Type: application/json\r\n\r\n${payload}\r\n` +
+      `--${boundary}--`;
+    const url = existing
+      ? `https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=multipart`
+      : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+    const r = await fetch(url, {
+      method: existing ? 'PATCH' : 'POST',
+      headers:{
+        Authorization: 'Bearer ' + gAccessToken,
+        'Content-Type': `multipart/related; boundary=${boundary}`
+      },
+      body: body
+    });
+    if(!r.ok) throw new Error('upload failed: ' + r.status);
+    const now = new Date().toLocaleString('ar-EG');
+    localStorage.setItem('dekroure_drive_last_backup', now);
+    alert('تم رفع النسخة الاحتياطية على جوجل درايف بنجاح.');
+    render('settings');
+  }catch(e){
+    console.error(e);
+    alert('تعذر رفع النسخة الاحتياطية على درايف. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+  }
+}
+
+async function driveRestoreLatest(){
+  const ok = await ensureAccessToken();
+  if(!ok){ alert('من فضلك سجل الدخول بجوجل أولاً.'); return; }
+  try{
+    const existing = await driveFindBackupFile();
+    if(!existing){ alert('لا توجد نسخة احتياطية محفوظة على درايف بعد.'); return; }
+    if(!confirm('سيتم استبدال البيانات الحالية بآخر نسخة محفوظة على جوجل درايف. هل تريد المتابعة؟')) return;
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`, {
+      headers:{ Authorization: 'Bearer ' + gAccessToken }
+    });
+    if(!r.ok) throw new Error('download failed');
+    const payload = await r.json();
+    if(!payload || !payload.state || typeof payload.state !== 'object'){
+      throw new Error('invalid backup file');
+    }
+    for(const k of KEYS){
+      const value = Array.isArray(payload.state[k]) ? payload.state[k] : [];
+      state[k] = value;
+      localStorage.setItem('dekroure_accounting_' + k, JSON.stringify(value));
+    }
+    alert('تمت استعادة البيانات من جوجل درايف بنجاح. سيتم تحديث البرنامج.');
+    location.reload();
+  }catch(e){
+    console.error(e);
+    alert('تعذر استعادة النسخة من درايف. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.');
+  }
+}
+
+/* ================= INIT ================= */
+window.addEventListener('DOMContentLoaded', async ()=>{
+  await loadAll();
+  // Google token renewal now happens only when the user actually taps a
+  // Drive-related button (ensureAccessToken), never automatically on load -
+  // auto-renewal here could trigger a "popup blocked" browser warning.
+});
+
+/* ================= PWA / OFFLINE INSTALL ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(e=>console.error('SW register failed', e));
+  });
+}
+</script>
+</body>
+</html>
